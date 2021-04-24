@@ -91,9 +91,21 @@ router.get('/', ensureCustomer, function(req, res, next) {
     res.render('index', { title: req.customer.username });
   });
 
-router.post('/cart', ensureCustomer, (req, res) => {
-    if (req.body.id){
-        let query = `INSERT INTO cart ( c_username, i_id ) VALUES ( '${req.customer.username}', '${req.body.id}' )`;
+router.get('/cart', ensureCustomer, (req, res) => {
+    let query = `SELECT * from cart where c_username='${req.customer.username}'`;
+    db.query(query, function (error, results, fields) {
+        if (error) {
+            console.log(error);
+            res.send(error)
+            return;
+        }
+        res.send(results)
+    });
+})
+
+router.post('/cart/:id', ensureCustomer, (req, res) => {
+    if (req.params.id){
+        let query = `INSERT INTO cart ( c_username, i_id ) VALUES ( '${req.customer.username}', (SELECT id from item where id='${req.params.id}') )`;
         db.query(query, function (error, results, fields) {
             if (error) {
                 console.log(error);

@@ -74,10 +74,7 @@ router.post('/login', function(req, res, next) {
                     username: results[0].username,
                     role: 'hotel',
                   }, process.env.JWT_SECRET, { expiresIn: '5m' });
-                res.cookie('token', token).send({
-                    token: token,
-                    hotel : results
-                })
+                res.cookie('token', token).redirect(`${user.username}`)
             });
         });
     } catch (error) {
@@ -94,11 +91,11 @@ router.get('/', function(req, res, next) {
             res.send(error)
             return;
         }
-        res.send(results)
+        res.render('hotel', {results: results})
     })
   });
 
-router.get('/:h_username/item', (req, res) => {
+router.get('/:h_username', (req, res) => {
     let query = `SELECT * FROM item WHERE h_username='${req.params.h_username}'`;
     db.query(query, function (error, results, fields) {
         if (error) {
@@ -106,12 +103,12 @@ router.get('/:h_username/item', (req, res) => {
             res.send(error)
             return;
         }
-        res.send(results)
+        res.render('item', {results: results})
     });
 })
 
 router.get('/item/create', ensureHotel, (req, res) => {
-    res.render('item', { title: req.hotel.username });
+    res.render('item_form', { title: req.hotel.username });
 })
 
 router.post('/item/create', ensureHotel, (req, res) => {
@@ -123,7 +120,7 @@ router.post('/item/create', ensureHotel, (req, res) => {
             res.send(error)
             return;
         }
-        res.send(results)
+        res.redirect(`/hotel/${req.hotel.username}`)
     });
 })
 

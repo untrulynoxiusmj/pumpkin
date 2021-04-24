@@ -1,7 +1,17 @@
-<form action="/hotel/item/create" method="post">
-    <input type="text" name="name" id="">
-    <input type="text" name="image" id="">
-     <input type="text" name="details" id="">
-    <input type="text" name="cost" id="">
-    <input type="submit" value="submit">
+{{#each results}}
+<label>{{this.id}}</label>
+<label>{{this.h_username}}</label>
+<label>{{this.name}}</label>
+<label>{{this.image}}</label>
+<label>{{this.details}}</label>
+<label>{{this.cost}}</label>
+<form action="/customer/cart/{{this.id}}" method="post">
+    <input type="submit" value="Add">
 </form>
+<br>
+<br>
+<br>
+{{/each}}
+
+
+
