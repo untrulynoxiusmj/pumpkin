@@ -1,11 +1,12 @@
 const express = require('express');
-const router = express.Router();
-var db = require('../config/db');
-
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const saltRounds = 10;
-const myPlaintextPassword = 's0/\/\P4$$w0rD';
-const someOtherPlaintextPassword = 'not_bacon';
+
+const db = require('../config/db');
+
+const router = express.Router();
+
+const saltRounds = process.env.SALT_ROUNDS;
 
 router.post('/register', function(req, res, next) {
     let user = req.body;
@@ -32,18 +33,39 @@ router.post('/register', function(req, res, next) {
     }
 });
 
+router.get('/login', function(req, res, next) {
+    res.render('form');
+});
 
 router.post('/login', function(req, res, next) {
     let user = req.body;
     try {
-        let query = `SELECT * FROM user WHERE username='${user.username}'`;
+        let query = `SELECT username, password FROM user WHERE username='${user.username}' LIMIT 1`;
         db.query(query, function (error, results, fields) {
             if (error) {
                 console.log(error);
                 res.send(error)
                 return;
             }
-            res.send(results)
+            if (results.length==0) {
+                res.send("No username exists")
+                return
+            }
+            bcrypt.compare(user.password, results[0].password, function(err, result) {
+                if (err) {
+                    console.log(err);
+                    res.send(err)
+                    return;
+                }
+                if (!result){
+                    res.send("wrong password")
+                    return;
+                }
+                const token = jwt.sign({
+                    username: results[0].username,
+                  }, process.env.JWT_SECRET, { expiresIn: '5m' });
+                res.cookie('token', token).send(token)
+            });
         });
     } catch (error) {
         res.send(error)
@@ -51,6 +73,9 @@ router.post('/login', function(req, res, next) {
     }
 });
 
+router.get('/logout', (req, res) => {
+    res.clearCookie("token").send("Logout successful");
+})
 
 
 
