@@ -22,7 +22,15 @@ module.exports = {
                         res.send(error)
                         return;
                     }
-                    req.customer = results[0]
+                    if (results.length==0){
+                        res.send("you are not registered as customer")
+                        return;
+                    }
+                    if (decoded.role!=='customer'){
+                        res.send("You are not a customer")
+                        return;
+                    }
+                    req.customer = results[0];
                     next() 
                 });
             })

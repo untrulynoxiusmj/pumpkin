@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const {ensureCustomer} = require('../middleware/customer')
 
 const db = require('../config/db');
+const { commit } = require('../config/db');
 
 const router = express.Router();
 
@@ -92,15 +93,35 @@ router.get('/', ensureCustomer, function(req, res, next) {
   });
 
 router.get('/cart', ensureCustomer, (req, res) => {
-    let query = `SELECT * from cart where c_username='${req.customer.username}'`;
+    // let query = `SELECT * from cart where c_username='${req.customer.username}'`;
+    let query = `SELECT c.*, i.id as i_id, i.name as i_name, i.image as i_image, i.details as i_details, i.cost as i_cost, h.username as h_username, h.name as h_name, h.address as h_address, h.phone as h_phone, h.bio as h_bio, h.image as h_image, h.delivery as h_delivery FROM cart c, item i, hotel h WHERE c.c_username = '${req.customer.username}' AND c.i_id = i.id AND i.h_username=h.username ORDER BY h.username;`
     db.query(query, function (error, results, fields) {
         if (error) {
             console.log(error);
             res.send(error)
             return;
         }
-        res.send(results)
+        console.log(results)
+        let ObjResultKeyHotel = new Object();
+        results.forEach(element => {
+            if (!ObjResultKeyHotel[element.h_username]){
+                ObjResultKeyHotel[element.h_username] = new Object({
+                    delivery: element.h_delivery ,
+                    orders: Array(element)
+                });
+            }
+            else{
+                ObjResultKeyHotel[element.h_username]['orders'].push(element);
+            }
+        });
+        console.log(ObjResultKeyHotel)
+        // res.send(ObjResultKeyHotel)
+        res.render('cart', {hotelOrders:ObjResultKeyHotel, customer:req.customer})
     });
+})
+
+router.post('order', ensureCustomer, (req, res) => {
+
 })
 
 router.post('/cart/:id', ensureCustomer, (req, res) => {

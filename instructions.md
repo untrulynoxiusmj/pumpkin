@@ -78,6 +78,14 @@ CREATE TABLE cart
   PRIMARY KEY         (c_username, i_id)
 );
 
+<!-- CREATE TABLE deliver
+(
+  id                         INT PRIMARY KEY AUTO_INCREMENT,
+  o_id                         INT                
+  c_username                 VARCHAR(150) NOT NULL,                
+  h_username                 VARCHAR(150) NOT NULL,
+); -->
+
 CREATE TABLE order
 (
   id                         INT PRIMARY KEY AUTO_INCREMENT,                

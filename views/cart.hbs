@@ -1,0 +1,38 @@
+{{#each hotelOrders}}
+    <strong>{{@key}}</strong>
+    <br>
+    {{#if this.delivery}}
+    <input type="radio" name={{@key}} value=1 id=""><label for="">yes</label>
+    <input type="radio" name={{@key}} value=0 id="" checked><label for="">no</label><br>
+    {{/if}}
+    {{#each this.orders}}
+        <label>{{this.c_username}}</label>
+        <label>{{this.i_id}}</label>
+        <strong><label>{{this.i_quantity}}</label></strong>
+        <label>{{this.i_name}}</label>
+        <label>{{this.i_image}}</label>
+        <label>{{this.i_details}}</label>
+        <label>{{this.i_cost}}</label>
+        <label>{{this.h_username}}</label>
+        <label>{{this.h_name}}</label>
+        <label for="">delivery</label>
+        <br>
+    {{/each}}
+        <br>
+        <br>
+        <br>
+{{/each}}
+
+{{customer.username}}
+{{customer.name}}
+{{customer.address}}
+{{customer.phone}}
+{{customer.image}}
+{{customer.bio}}
+
+<br>
+
+<form action="/customer/order" method="post">
+    <input type="text" name="address" value={{customer.address}} id="">
+    <input type="submit" value="Order">
+</form>
