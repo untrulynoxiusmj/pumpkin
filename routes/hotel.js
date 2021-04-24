@@ -25,7 +25,7 @@ router.post('/signup', function(req, res, next) {
                 res.send(err)
                 return;
             }
-            let query = `INSERT INTO hotel ( username, password, name, address, phone, bio, delivery ) VALUES ( '${hotel.username}', '${hash}', '${hotel.name}', '${hotel.address}', '${hotel.phone}', '${hotel.bio}', '${hotel.delivery}' )`;
+            let query = `INSERT INTO hotel ( username, password, name, address, phone, image, bio, delivery ) VALUES ( '${hotel.username}', '${hash}', '${hotel.name}', '${hotel.address}', '${hotel.phone}', '${hotel.image}', '${hotel.bio}', '${hotel.delivery}' )`;
             db.query(query, function (error, results, fields) {
                 if (error) {
                     console.log(error);
@@ -89,6 +89,35 @@ router.get('/',  ensureHotel, function(req, res, next) {
     console.log(req.hotel)
     res.render('index', { title: req.hotel.username });
   });
+
+router.get('/:h_username/item', (req, res) => {
+    let query = `SELECT * FROM item WHERE h_username='${req.params.h_username}'`;
+    db.query(query, function (error, results, fields) {
+        if (error) {
+            console.log(error);
+            res.send(error)
+            return;
+        }
+        res.send(results)
+    });
+})
+
+router.get('/item/create', ensureHotel, (req, res) => {
+    res.render('item', { title: req.hotel.username });
+})
+
+router.post('/item/create', ensureHotel, (req, res) => {
+    const item = req.body;
+    let query = `INSERT INTO item ( h_username, name, image, details, cost ) VALUES ( '${req.hotel.username}', '${item.name}', '${item.image}', '${item.details}', '${item.cost}' )`;
+    db.query(query, function (error, results, fields) {
+        if (error) {
+            console.log(error);
+            res.send(error)
+            return;
+        }
+        res.send(results)
+    });
+})
 
 router.get('/logout', (req, res) => {
     res.clearCookie("token").send("Logout successful");
