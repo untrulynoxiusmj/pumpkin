@@ -42,7 +42,7 @@ router.post('/signup', function(req, res, next) {
 });
 
 router.get('/login', function(req, res, next) {
-    res.render('form');
+    res.render('login', {role:'hotel'});
 });
 
 router.post('/login', function(req, res, next) {
@@ -72,6 +72,7 @@ router.post('/login', function(req, res, next) {
                 }
                 const token = jwt.sign({
                     username: results[0].username,
+                    role: 'hotel',
                   }, process.env.JWT_SECRET, { expiresIn: '5m' });
                 res.cookie('token', token).send({
                     token: token,
@@ -85,9 +86,16 @@ router.post('/login', function(req, res, next) {
     }
 });
 
-router.get('/',  ensureHotel, function(req, res, next) {
-    console.log(req.hotel)
-    res.render('index', { title: req.hotel.username });
+router.get('/', function(req, res, next) {
+    let query = `SELECT username, name, address, phone, bio, image, delivery FROM hotel`;
+    db.query(query, (error, results, fields) => {
+        if (error) {
+            console.log(error);
+            res.send(error)
+            return;
+        }
+        res.send(results)
+    })
   });
 
 router.get('/:h_username/item', (req, res) => {

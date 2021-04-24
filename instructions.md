@@ -41,7 +41,7 @@ CREATE TABLE customer
   phone            VARCHAR(15) NOT NULL,  
   image               VARCHAR(150) NOT NULL,
   bio                 VARCHAR(150),
-  PRIMARY KEY         (username)  
+  PRIMARY KEY         (username),
     CHECK (LENGTH(username) > 5),
   CHECK (LENGTH(password) > 5)                           
 );
@@ -72,16 +72,18 @@ CREATE TABLE item
 
 CREATE TABLE cart
 (
-  id                       INT PRIMARY KEY AUTO_INCREMENT,
   c_username               VARCHAR(150) NOT NULL,                
   i_id                     VARCHAR(150) NOT NULL,
-  i_quantity               VARCHAR(150)                  
+  i_quantity               VARCHAR(150) DEFAULT 1,
+  PRIMARY KEY         (c_username, i_id)
 );
 
 CREATE TABLE order
 (
   id                         INT PRIMARY KEY AUTO_INCREMENT,                
-  i_c_id                     VARCHAR(150) NOT NULL,   
+  c_username               VARCHAR(150) NOT NULL,                
+  i_id                     VARCHAR(150) NOT NULL,
+  i_quantity               VARCHAR(150)   
   cost                       VARCHAR(150) NOT NULL,
   d_username                 VARCHAR(150),
   address                    VARCHAR(150) NOT NULL,

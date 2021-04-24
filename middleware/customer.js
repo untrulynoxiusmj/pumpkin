@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const db = require('../config/db');
 
 module.exports = {
-    ensureHotel: (req, res, next) => {
+    ensureCustomer: (req, res, next) => {
         console.log(req.cookies)
         const token = req.cookies.token;
         if (!token) return res.send("Denied")
@@ -15,23 +15,14 @@ module.exports = {
                     return;
                 }
                 console.log(decoded) // bar
-                let query = `SELECT * FROM hotel WHERE username='${decoded.username}' LIMIT 1`;
+                let query = `SELECT * FROM customer WHERE username='${decoded.username}' LIMIT 1`;
                 db.query(query, function (error, results, fields) {
                     if (error) {
                         console.log(error);
                         res.send(error)
                         return;
                     }
-                    console.log(results)
-                    if (results.length==0){
-                        res.send("Couldn't find hotel")
-                        return;
-                    }
-                    if (decoded.role!=='hotel'){
-                        res.send("You are not a hotel")
-                        return;
-                    }
-                    req.hotel = results[0];
+                    req.customer = results[0]
                     next() 
                 });
             })
