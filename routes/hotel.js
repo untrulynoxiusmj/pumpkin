@@ -73,7 +73,7 @@ router.post('/login', function(req, res, next) {
                 const token = jwt.sign({
                     username: results[0].username,
                     role: 'hotel',
-                  }, process.env.JWT_SECRET, { expiresIn: '5m' });
+                  }, process.env.JWT_SECRET, { expiresIn: '20m' });
                 res.cookie('token', token).redirect(`${user.username}`)
             });
         });
@@ -95,7 +95,7 @@ router.get('/', function(req, res, next) {
     })
   });
 
-router.get('/:h_username', (req, res) => {
+router.get('/details/:h_username', (req, res) => {
     let query = `SELECT * FROM item WHERE h_username='${req.params.h_username}'`;
     db.query(query, function (error, results, fields) {
         if (error) {
@@ -121,6 +121,19 @@ router.post('/item/create', ensureHotel, (req, res) => {
             return;
         }
         res.redirect(`/hotel/${req.hotel.username}`)
+    });
+})
+
+router.get('/order', ensureHotel, (req, res) => {
+    let query = `SELECT o.*, i.id as i_id, i.name as i_name, i.image as i_image, i.details as i_details, i.cost as i_cost, h.username as h_username, h.name as h_name, h.address as h_address, h.phone as h_phone, h.bio as h_bio, h.image as h_image, h.delivery as h_delivery FROM order_t o, item i, hotel h WHERE o.i_id = i.id AND i.h_username='${req.hotel.username}' AND h.username ='${req.hotel.username}';`
+    db.query(query, function (error, results, fields) {
+        if (error) {
+            console.log(error);
+            res.send(error)
+            return;
+        }
+        console.log(results)
+        res.send(results)
     });
 })
 

@@ -74,7 +74,7 @@ router.post('/login', function(req, res, next) {
                 const token = jwt.sign({
                     username: results[0].username,
                     role : 'customer'
-                  }, process.env.JWT_SECRET, { expiresIn: '5m' });
+                  }, process.env.JWT_SECRET, { expiresIn: '20m' });
                 res.cookie('token', token).send({
                     token: token,
                     hotel : results
@@ -120,8 +120,45 @@ router.get('/cart', ensureCustomer, (req, res) => {
     });
 })
 
-router.post('order', ensureCustomer, (req, res) => {
+router.get('/order', ensureCustomer, (req, res) => {
+    // let query = `SELECT * from cart where c_username='${req.customer.username}'`;
+    let query = `SELECT * from order_t where c_username='${req.customer.username}'`;
+    db.query(query, function (error, results, fields) {
+        if (error) {
+            console.log(error);
+            res.send(error)
+            return;
+        }
+        console.log(results)
+        res.send(results)
+    });
+})
 
+router.post('/order', ensureCustomer, (req, res) => {
+    console.log(req.body)
+    // INSERT INTO dues_storage
+    // SELECT d.*, CURRENT_DATE()
+    // FROM dues d
+    // WHERE id = 5;
+    let query = `INSERT INTO order_t ( c_username, i_id, i_quantity, cost, address ) SELECT c.*, (SELECT cost from item where id=c.i_id)*c.i_quantity as cost, '${req.body.address}' as address FROM cart c WHERE c.c_username = '${req.customer.username}';`
+    let deleteQuery = `DELETE from cart where c_username = '${req.customer.username}';`
+    db.query(query, function (error, results, fields) {
+        if (error) {
+            console.log(error);
+            res.send(error)
+            return;
+        }
+        db.query(deleteQuery, (error, deleteResult, fields) => {
+            if (error) {
+                console.log(error);
+                res.send(error)
+                return;
+            }
+            console.log(results)
+            console.log(deleteResult)
+            res.send(results)
+        })
+    });
 })
 
 router.post('/cart/:id', ensureCustomer, (req, res) => {

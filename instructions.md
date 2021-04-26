@@ -11,8 +11,8 @@ CREATE TABLE hotel
   username            VARCHAR(150) NOT NULL,                
   password            VARCHAR(150) NOT NULL,                
   name                VARCHAR(150) NOT NULL,
-  address            VARCHAR(150) NOT NULL,  
-  phone            VARCHAR(15) NOT NULL,  
+  address            VARCHAR(150) NOT NULL,
+  phone            VARCHAR(15) NOT NULL,    
   bio                 VARCHAR(150) NOT NULL,
   image               VARCHAR(150) NOT NULL,
   delivery            BOOL DEFAULT 0,
@@ -86,15 +86,16 @@ CREATE TABLE cart
   h_username                 VARCHAR(150) NOT NULL,
 ); -->
 
-CREATE TABLE order
+
+CREATE TABLE order_t
 (
   id                         INT PRIMARY KEY AUTO_INCREMENT,                
-  c_username               VARCHAR(150) NOT NULL,                
-  i_id                     VARCHAR(150) NOT NULL,
-  i_quantity               VARCHAR(150)   
+  c_username                 VARCHAR(150) NOT NULL,                
+  i_id                       VARCHAR(150) NOT NULL,
+  i_quantity                 VARCHAR(150),
   cost                       VARCHAR(150) NOT NULL,
   d_username                 VARCHAR(150),
   address                    VARCHAR(150) NOT NULL,
-  payment_status             BOOL DEFAULT 0,
-  order_status               BOOL DEFAULT 0,
+  payment_status             ENUM('PENDING', 'COMPLETED', 'CANCELLED') DEFAULT 'PENDING',
+  order_status               ENUM('PENDING', 'COMPLETED', 'CANCELLED') DEFAULT 'PENDING'
 );

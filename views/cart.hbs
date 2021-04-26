@@ -1,3 +1,4 @@
+<form action="/customer/order" method="post">
 {{#each hotelOrders}}
     <strong>{{@key}}</strong>
     <br>
@@ -31,8 +32,6 @@
 {{customer.bio}}
 
 <br>
-
-<form action="/customer/order" method="post">
     <input type="text" name="address" value={{customer.address}} id="">
     <input type="submit" value="Order">
 </form>
