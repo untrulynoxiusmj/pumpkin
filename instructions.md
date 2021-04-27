@@ -46,7 +46,7 @@ CREATE TABLE customer
   CHECK (LENGTH(password) > 5)                           
 );
 
-CREATE TABLE delivery_person
+CREATE TABLE delivery
 (
   username            VARCHAR(150) NOT NULL,                
   password            VARCHAR(150) NOT NULL,                
@@ -55,7 +55,7 @@ CREATE TABLE delivery_person
   phone            VARCHAR(15) NOT NULL,  
   image               VARCHAR(150) NOT NULL,
   bio                 VARCHAR(150),
-  PRIMARY KEY         (username)    
+  PRIMARY KEY         (username),
     CHECK (LENGTH(username) > 5),
   CHECK (LENGTH(password) > 5)             
 );
@@ -78,6 +78,14 @@ CREATE TABLE cart
   PRIMARY KEY         (c_username, i_id)
 );
 
+CREATE TABLE cart_deliver
+(
+  c_username               VARCHAR(150) NOT NULL,                
+  h_username                    VARCHAR(150) NOT NULL,
+  delivery_chosen          BOOL DEFAULT 0,
+  PRIMARY KEY         (c_username, h_username)
+);
+
 <!-- CREATE TABLE deliver
 (
   id                         INT PRIMARY KEY AUTO_INCREMENT,
@@ -94,6 +102,7 @@ CREATE TABLE order_t
   i_id                       VARCHAR(150) NOT NULL,
   i_quantity                 VARCHAR(150),
   cost                       VARCHAR(150) NOT NULL,
+  delivery_chosen            BOOL DEFAULT 0,
   d_username                 VARCHAR(150),
   address                    VARCHAR(150) NOT NULL,
   payment_status             ENUM('PENDING', 'COMPLETED', 'CANCELLED') DEFAULT 'PENDING',

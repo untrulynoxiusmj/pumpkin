@@ -1,10 +1,12 @@
-<form action="/customer/order" method="post">
+
 {{#each hotelOrders}}
     <strong>{{@key}}</strong>
     <br>
-    {{#if this.delivery}}
-    <input type="radio" name={{@key}} value=1 id=""><label for="">yes</label>
-    <input type="radio" name={{@key}} value=0 id="" checked><label for="">no</label><br>
+    {{#if this.delivery_provided}}
+    <form action="/customer/cart/deliver" method="post">
+        <input onchange="submit()" type="radio" name={{@key}} value=1 id="" {{#if this.delivery_chosen}} checked {{/if}}><label for="">yes</label>
+        <input onchange="submit()" type="radio" name={{@key}} value=0 id="" {{#unless this.delivery_chosen}} checked {{/unless}}><label for="">no</label><br>
+    </form>
     {{/if}}
     {{#each this.orders}}
         <label>{{this.c_username}}</label>
@@ -32,6 +34,8 @@
 {{customer.bio}}
 
 <br>
+<form action="/customer/order" method="post">
     <input type="text" name="address" value={{customer.address}} id="">
     <input type="submit" value="Order">
+
 </form>

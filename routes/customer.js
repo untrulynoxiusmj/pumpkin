@@ -11,7 +11,7 @@ const router = express.Router();
 const saltRounds = 10;
 
 router.get('/signup', function(req, res, next) {
-    res.render('customer_signup');
+    res.render('signup', {role:'customer'});
 });
 
 
@@ -94,7 +94,7 @@ router.get('/', ensureCustomer, function(req, res, next) {
 
 router.get('/cart', ensureCustomer, (req, res) => {
     // let query = `SELECT * from cart where c_username='${req.customer.username}'`;
-    let query = `SELECT c.*, i.id as i_id, i.name as i_name, i.image as i_image, i.details as i_details, i.cost as i_cost, h.username as h_username, h.name as h_name, h.address as h_address, h.phone as h_phone, h.bio as h_bio, h.image as h_image, h.delivery as h_delivery FROM cart c, item i, hotel h WHERE c.c_username = '${req.customer.username}' AND c.i_id = i.id AND i.h_username=h.username ORDER BY h.username;`
+    let query = `SELECT c.*, i.id as i_id, i.name as i_name, i.image as i_image, i.details as i_details, i.cost as i_cost, h.username as h_username, h.name as h_name, h.address as h_address, h.phone as h_phone, h.bio as h_bio, h.image as h_image, h.delivery as h_delivery, cd.delivery_chosen FROM cart c, item i, hotel h, cart_deliver cd WHERE c.c_username = '${req.customer.username}' AND c.i_id = i.id AND i.h_username=h.username AND cd.c_username=c.c_username AND cd.h_username=h.username ORDER BY h.username;`
     db.query(query, function (error, results, fields) {
         if (error) {
             console.log(error);
@@ -106,7 +106,8 @@ router.get('/cart', ensureCustomer, (req, res) => {
         results.forEach(element => {
             if (!ObjResultKeyHotel[element.h_username]){
                 ObjResultKeyHotel[element.h_username] = new Object({
-                    delivery: element.h_delivery ,
+                    delivery_provided: element.h_delivery ,
+                    delivery_chosen: element.delivery_chosen,
                     orders: Array(element)
                 });
             }
@@ -117,6 +118,20 @@ router.get('/cart', ensureCustomer, (req, res) => {
         console.log(ObjResultKeyHotel)
         // res.send(ObjResultKeyHotel)
         res.render('cart', {hotelOrders:ObjResultKeyHotel, customer:req.customer})
+    });
+})
+
+router.post("/cart/deliver", ensureCustomer, (req, res) => {
+    if (!Object.keys(req.body)[0]) return res.redirect("/customer/cart");
+    let query = `UPDATE cart_deliver SET delivery_chosen = (${Object.values(req.body)[0]} AND (SELECT delivery from hotel where username=h_username) ) WHERE c_username='${req.customer.username}' AND h_username='${Object.keys(req.body)[0]}';`
+    db.query(query, function (error, results, fields) {
+        if (error) {
+            console.log(error);
+            res.send(error)
+            return;
+        }
+        console.log(results)
+        res.send(results)
     });
 })
 
@@ -140,37 +155,64 @@ router.post('/order', ensureCustomer, (req, res) => {
     // SELECT d.*, CURRENT_DATE()
     // FROM dues d
     // WHERE id = 5;
-    let query = `INSERT INTO order_t ( c_username, i_id, i_quantity, cost, address ) SELECT c.*, (SELECT cost from item where id=c.i_id)*c.i_quantity as cost, '${req.body.address}' as address FROM cart c WHERE c.c_username = '${req.customer.username}';`
+    mapUndefTo0  = {
+        undefined: 0,
+        0: 0,
+        1: 1
+    }
+    // let query = `INSERT INTO order_t ( c_username, i_id, i_quantity, cost, delivery_chosen, address ) SELECT c.*, (SELECT cost from item where id=c.i_id)*c.i_quantity as cost, '${mapUndefTo0[req.body['select h_username from item where id=c.i_id']]}', '${req.body.address}' as address FROM cart c WHERE c.c_username = '${req.customer.username}';`
+    
+    let selectQuery = `SELECT * from cart where c_username = '${req.customer.username}'`;
     let deleteQuery = `DELETE from cart where c_username = '${req.customer.username}';`
+
+
+    let query = `INSERT INTO order_t ( c_username, i_id, i_quantity, cost, delivery_chosen, address ) SELECT c.* , (SELECT cost from item where id=c.i_id)*c.i_quantity as cost, (SELECT delivery_chosen from cart_deliver where h_username in (SELECT h_username from item where id=c.i_id) AND c_username='${req.customer.username}'), '${req.body.address}' FROM cart c WHERE c.c_username = '${req.customer.username}';`
+
     db.query(query, function (error, results, fields) {
         if (error) {
             console.log(error);
             res.send(error)
             return;
         }
-        db.query(deleteQuery, (error, deleteResult, fields) => {
-            if (error) {
-                console.log(error);
-                res.send(error)
-                return;
-            }
-            console.log(results)
-            console.log(deleteResult)
-            res.send(results)
-        })
+
+        // results.forEach(result => {
+        //     let insertQuery = `INSERT INTO order_t ( c_username, i_id, i_quantity, cost, d (SELECT cost from item where id=c.i_id)*c.i_quantity as cost, '${req.body.address}' as address FROM cart c WHERE c.c_username = '${req.customer.username}';`
+        // })
+
+        
+        res.send(results)
+        // db.query(deleteQuery, (error, deleteResult, fields) => {
+        //     if (error) {
+        //         console.log(error);
+        //         res.send(error)
+        //         return;
+        //     }
+        //     console.log(results)
+        //     console.log(deleteResult)
+        //     res.send(results)
+        // })
     });
 })
 
 router.post('/cart/:id', ensureCustomer, (req, res) => {
     if (req.params.id){
         let query = `INSERT INTO cart ( c_username, i_id ) VALUES ( '${req.customer.username}', (SELECT id from item where id='${req.params.id}') )`;
+        let Anotherquery = `INSERT INTO cart_deliver ( c_username, h_username ) VALUES ( '${req.customer.username}', (SELECT h_username from item where id='${req.params.id}') )`;
         db.query(query, function (error, results, fields) {
             if (error) {
                 console.log(error);
                 res.send(error)
                 return;
             }
-            res.send(results)
+            db.query(Anotherquery, function (error, results, fields) {
+                if (error) {
+                    console.log(error);
+                    res.send(error)
+                    return;
+                }
+                res.send(results)
+            });
+            // res.send(results)
         });
     }
     else{
