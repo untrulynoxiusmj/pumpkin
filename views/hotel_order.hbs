@@ -1,49 +1,104 @@
-
-{{#each hotelOrders}}
-    <strong>{{@key}}</strong>
-    <br>
-    {{#if this.delivery_chosen}}
-    {{!-- <input onchange="submit()" type="radio" name={{@key}} value=1 id="" {{#if this.delivery_chosen}} checked {{/if}}><label for="">yes</label>
-    <input onchange="submit()" type="radio" name={{@key}} value=0 id="" {{#unless this.delivery_chosen}} checked {{/unless}}><label for="">no</label><br> --}}
-    {{/if}}
-    {{#each this.orders}}
-        <label>{{this.id}}</label>
-        <label>{{this.c_username}}</label>
-        <label>{{this.i_id}}</label>
-        <strong><label>{{this.i_quantity}}</label></strong>
-        <strong><label>{{cost}}</label></strong>
-        <strong><label>{{this.delivery_chosen}}</label></strong>
-        <strong><label>{{this.d_username}}</label></strong>
-        <label>{{this.i_name}}</label>
-        <label>{{this.i_image}}</label>
-        <label>{{this.i_details}}</label>
-        <label>{{this.h_username}}</label>
-        <label>{{this.h_name}}</label>
-        <label>{{this.payment_status}}</label>
-        <label>{{this.order_status}}</label>
+{{#each objResult}}
+  {{!-- {{#if this.delivery_provided}} --}}
+  {{!-- <form action="/customer/cart/deliver" method="post">
+        <input onchange="submit()" type="radio" name={{@key}} value=1 id="" {{#if this.delivery_chosen}} checked {{/if}}><label for="">yes</label>
+        <input onchange="submit()" type="radio" name={{@key}} value=0 id="" {{#unless this.delivery_chosen}} checked {{/unless}}><label for="">no</label><br>
+    </form> --}}
+  {{!-- {{/if}} --}}
+  <h1>
+    {{@key}}
+  </h1>
+  {{#each this}}
+    <h2>
+      {{@key}}
+    </h2>
+    {{#each this}}
+      <h3>
+        {{@key}}
+      </h3>
+      {{!-- <h3>{{this.delivery_provided}}</h3>
+            <h3>{{this.delivery_chosen}}</h3> --}}
+      {{!-- <h3>{{this.c_username}}</h3> --}}
+      {{#each orders}}
+        <label>
+          {{this.id}}
+        </label>
+        <label>
+          {{this.c_username}}
+        </label>
+        <label>
+          {{this.i_id}}
+        </label>
+        <strong>
+          <label>
+            {{this.i_quantity}}
+          </label>
+        </strong>
+        <strong>
+          <label>
+            {{cost}}
+          </label>
+        </strong>
+        <strong>
+          <label>
+            {{this.delivery_chosen}}
+          </label>
+        </strong>
+        <strong>
+          <label>
+            {{this.d_username}}
+          </label>
+        </strong>
+        <label>
+          {{this.i_name}}
+        </label>
+        <label>
+          {{this.i_image}}
+        </label>
+        <label>
+          {{this.i_details}}
+        </label>
+        <label>
+          {{this.h_username}}
+        </label>
+        <label>
+          {{this.h_name}}
+        </label>
+        <label>
+          {{this.timestamp}}
+        </label>
+        <label>
+          {{this.payment_status}}
+        </label>
+        <label>
+          {{this.order_status}}
+        </label>
         <form action="/hotel/order/{{this.id}}/payment/completed" method="post">
-            <button type="submit">payment complete?</button>
+          <button type="submit">
+            payment complete?
+          </button>
         </form>
         <form action="/hotel/order/{{this.id}}/status/completed" method="post">
-            <button type="submit">order complete?</button>
+          <button type="submit">
+            order complete?
+          </button>
         </form>
-        <br>
+        <br />
+      {{/each}}
     {{/each}}
-        <br>
-        <br>
-        <br>
+  {{/each}}
+  <br />
+  <br />
+  <br />
 {{/each}}
-
 {{customer.username}}
 {{customer.name}}
 {{customer.address}}
 {{customer.phone}}
 {{customer.image}}
 {{customer.bio}}
-
-<br>
+<br />
 <form action="/customer/order" method="post">
-    <input type="text" name="address" value={{customer.address}} id="">
-    <input type="submit" value="Order">
-
+  <input type="text" name="address" value={{customer.address}} id="" />
+  <input type="submit" value="Order" />
 </form>

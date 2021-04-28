@@ -105,6 +105,7 @@ CREATE TABLE order_t
   delivery_chosen            BOOL DEFAULT 0,
   d_username                 VARCHAR(150),
   address                    VARCHAR(150) NOT NULL,
+  timestamp                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   payment_status             ENUM('PENDING', 'COMPLETED', 'CANCELLED') DEFAULT 'PENDING',
   order_status               ENUM('PENDING', 'COMPLETED', 'CANCELLED') DEFAULT 'PENDING'
 );

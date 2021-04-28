@@ -124,8 +124,8 @@ router.post('/item/create', ensureHotel, (req, res) => {
     });
 })
 
-router.get('/order', ensureHotel, (req, res) => {
-    let query = `SELECT o.*, i.id as i_id, i.name as i_name, i.image as i_image, i.details as i_details, i.cost as i_cost, h.username as h_username, h.name as h_name, h.address as h_address, h.phone as h_phone, h.bio as h_bio, h.image as h_image, h.delivery as h_delivery FROM order_t o, item i, hotel h WHERE o.i_id = i.id AND i.h_username='${req.hotel.username}' AND h.username ='${req.hotel.username}' AND o.order_status='PENDING';`
+router.get('/order/:status', ensureHotel, (req, res) => {
+    let query = `SELECT o.*, i.id as i_id, i.name as i_name, i.image as i_image, i.details as i_details, i.cost as i_cost, h.username as h_username, h.name as h_name, h.address as h_address, h.phone as h_phone, h.bio as h_bio, h.image as h_image, h.delivery as h_delivery FROM order_t o, item i, hotel h WHERE o.i_id = i.id AND i.h_username='${req.hotel.username}' AND h.username ='${req.hotel.username}' AND o.order_status='${req.params.status}' ORDER BY o.timestamp DESC;`
     db.query(query, function (error, results, fields) {
         if (error) {
             console.log(error);
@@ -133,28 +133,51 @@ router.get('/order', ensureHotel, (req, res) => {
             return;
         }
         console.log(results)
-        let ObjResultKeyHotel = new Object();
+        let ObjResult = new Object();
         results.forEach(element => {
-            if (!ObjResultKeyHotel[element.c_username]){
-                ObjResultKeyHotel[element.c_username] = new Object({
-                    delivery_provided: element.h_delivery ,
-                    delivery_chosen: element.delivery_chosen,
-                    orders: Array(element)
-                });
+            if (!ObjResult[element.timestamp]){
+                ObjResult[element.timestamp] = new Object()
+                ObjResult[element.timestamp][element.c_username] = new Object()
+                ObjResult[element.timestamp][element.c_username][element.d_username] = new Object(
+                    {
+                        delivery_provided: element.h_delivery ,
+                        delivery_chosen: element.delivery_chosen,
+                        orders: Array(element)
+                    })
             }
             else{
-                ObjResultKeyHotel[element.c_username]['orders'].push(element);
+                if (!ObjResult[element.timestamp][element.c_username]){
+                    ObjResult[element.timestamp][element.c_username] = new Object()
+                    ObjResult[element.timestamp][element.c_username][element.d_username] = new Object(
+                        {
+                            delivery_provided: element.h_delivery ,
+                            delivery_chosen: element.delivery_chosen,
+                            orders: Array(element)
+                        })
+                }
+                else{
+                    if (!ObjResult[element.timestamp][element.c_username][element.d_username]){
+                        ObjResult[element.timestamp][element.c_username][element.d_username] = new Object(
+                            {
+                                delivery_provided: element.h_delivery ,
+                                delivery_chosen: element.delivery_chosen,
+                                orders: Array(element)
+                            })
+                    }
+                    else{
+                        ObjResult[element.timestamp][element.c_username][element.d_username]['orders'].push(element)
+                    }
+                }
             }
         });
-        console.log(ObjResultKeyHotel)
-        // res.send(ObjResultKeyHotel)
-        res.render('hotel_order', {hotelOrders:ObjResultKeyHotel, customer:req.customer})
-        // res.send(ObjResultKeyHotel)
+        console.log(ObjResult)
+        // res.send(ObjResult)
+        res.render('hotel_order', {objResult:ObjResult, customer:req.customer})
     });
 })
 
 router.post('/order/:id/status/completed', ensureHotel,  (req, res) => {
-    let query = `UPDATE order_t SET order_status='COMPLETED' where id='${req.params.id}' AND '${req.hotel.username}' in (SELECT h_username FROM item where id=i_id) AND order_status='PENDING';`
+    let query = `UPDATE order_t SET payment_status='COMPLETED', order_status='COMPLETED' where id='${req.params.id}' AND '${req.hotel.username}' in (SELECT h_username FROM item where id=i_id) AND order_status='PENDING';`
     db.query(query, function (error, results, fields) {
         if (error) {
             console.log(error);

@@ -135,9 +135,9 @@ router.post("/cart/deliver", ensureCustomer, (req, res) => {
     });
 })
 
-router.get('/order', ensureCustomer, (req, res) => {
+router.get('/order/:status', ensureCustomer, (req, res) => {
     // let query = `SELECT * from cart where c_username='${req.customer.username}'`;
-    let query = `SELECT * from order_t where c_username='${req.customer.username}'`;
+    let query = `SELECT o.*, i.id as i_id, i.name as i_name, i.image as i_image, i.details as i_details, i.cost as i_cost, h.username as h_username, h.name as h_name, h.address as h_address, h.phone as h_phone, h.bio as h_bio, h.image as h_image, h.delivery as h_delivery FROM order_t o, item i, hotel h WHERE o.i_id = i.id AND i.h_username=h.username AND o.c_username='${req.customer.username}' AND order_status='${req.params.status}' ORDER BY o.timestamp DESC;`
     db.query(query, function (error, results, fields) {
         if (error) {
             console.log(error);
@@ -145,7 +145,71 @@ router.get('/order', ensureCustomer, (req, res) => {
             return;
         }
         console.log(results)
-        res.send(results)
+        let ObjResult = new Object();
+        results.forEach(element => {
+            if (!ObjResult[element.timestamp]){
+                ObjResult[element.timestamp] = new Object()
+                ObjResult[element.timestamp][element.h_username] = new Object()
+                ObjResult[element.timestamp][element.h_username][element.d_username] = new Object(
+                    {
+                        delivery_provided: element.h_delivery ,
+                        delivery_chosen: element.delivery_chosen,
+                        orders: Array(element)
+                    })
+            }
+            else{
+                if (!ObjResult[element.timestamp][element.h_username]){
+                    ObjResult[element.timestamp][element.h_username] = new Object()
+                    ObjResult[element.timestamp][element.h_username][element.d_username] = new Object(
+                        {
+                            delivery_provided: element.h_delivery ,
+                            delivery_chosen: element.delivery_chosen,
+                            orders: Array(element)
+                        })
+                }
+                else{
+                    if (!ObjResult[element.timestamp][element.h_username][element.d_username]){
+                        ObjResult[element.timestamp][element.h_username][element.d_username] = new Object(
+                            {
+                                delivery_provided: element.h_delivery ,
+                                delivery_chosen: element.delivery_chosen,
+                                orders: Array(element)
+                            })
+                    }
+                    else{
+                        ObjResult[element.timestamp][element.h_username][element.d_username]['orders'].push(element)
+                    }
+                }
+            }
+        });
+        console.log(ObjResult)
+        // res.send(ObjResult)
+        res.render('customer_order', {objResult:ObjResult, customer:req.customer})
+    });
+})
+
+
+// {
+//     time: {
+//         h: {
+//             d: 
+//             o: 
+//         },
+//         {
+
+//         }
+//     }
+// }
+
+router.post('/order/:id/cancel', ensureCustomer, (req, res) => {
+    let query = `UPDATE order_t SET payment_status='CANCELLED', order_status='CANCELLED' where id='${req.params.id}' AND c_username='${req.customer.username}' AND order_status='PENDING';`
+    db.query(query, function (error, results, fields) {
+        if (error) {
+            console.log(error);
+            res.send(error)
+            return;
+        }
+        res.redirect(`/customer/order`)
     });
 })
 
