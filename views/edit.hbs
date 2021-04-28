@@ -1,0 +1,23 @@
+<form action="/{{role}}/signup" method="post" enctype="multipart/form-data">
+    <label for="">username</label><input type="text" name="username" id="" value="{{username}}"><br>
+    "{{!-- <label for="">password</label><input type="password" name="password" id=""><br> --}}"
+    <label for="">name</label><input type="text" name="name" id="" value="{{name}}"><br>
+    <label for="">address</label><input type="text" name="address" value="{{address}}" id=""><br>
+    <label for="">phone</label><input type="text" name="phone" value="{{phone}}" id=""><br>
+    <label for="">image</label>
+    <img src="" alt="" srcset="/{{image}}">
+    <input type="file" id="image" value=/{{image}} name="image" accept="image/*">
+    {{!-- <input type="text" name="image" id=""><br> --}}
+    <label for="">bio</label><input type="text" name="bio" value="{{bio}}" id=""><br>
+    {{#if hotel}}
+    <label for="">delivery</label><br>
+    <input type="radio" name="delivery" value=1 id=""><label for="">yes</label>
+    <input type="radio" name="delivery" value=0 id=""><label for="">no</label><br>
+    {{/if}}
+    <input type="submit" value="Signup">
+</form>
+
+{{!-- <form action="/customer/upload" enctype="multipart/form-data" method="post">
+    <label for="">image</label><input type="file" id="image" name="image" accept="image/*">
+    <input type="submit" value="Signup">
+</form> --}}

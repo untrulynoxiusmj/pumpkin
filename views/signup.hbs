@@ -4,7 +4,7 @@
     <label for="">name</label><input type="text" name="name" id=""><br>
     <label for="">address</label><input type="text" name="address" id=""><br>
     <label for="">phone</label><input type="text" name="phone" id=""><br>
-    <label for="">image</label><input type="file" id="image" name="image" accept="image/*">
+    <label for="">image</label><input onchange=preview(this) type="file" id="image" name="image" accept="image/*">
     {{!-- <input type="text" name="image" id=""><br> --}}
     <label for="">bio</label><input type="text" name="bio" id=""><br>
     {{#if hotel}}
@@ -13,9 +13,25 @@
     <input type="radio" name="delivery" value=0 id=""><label for="">no</label><br>
     {{/if}}
     <input type="submit" value="Signup">
+    <img id="pre" src="" alt="">
 </form>
 
 {{!-- <form action="/customer/upload" enctype="multipart/form-data" method="post">
     <label for="">image</label><input type="file" id="image" name="image" accept="image/*">
     <input type="submit" value="Signup">
 </form> --}}
+
+
+
+<script>
+    let preview = (e) => {
+        var file = document.querySelector("#image").files[0]
+        
+        var img = document.getElementById("pre");
+        var reader = new FileReader();
+        reader.onloadend = function() {
+             img.src = reader.result;
+        }
+        reader.readAsDataURL(file);
+};
+</script>

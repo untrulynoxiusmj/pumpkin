@@ -43,6 +43,10 @@ router.get('/signup', function(req, res, next) {
     res.render('signup', {role:'customer'});
 });
 
+router.get('/edit', ensureCustomer, function(req, res, next) {
+    res.render('edit', req.customer);
+});
+
 
 router.post('/signup', upload.single('image'), function(req, res, next) {
     let customer = req.body;
