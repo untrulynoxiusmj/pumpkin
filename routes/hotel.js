@@ -91,7 +91,7 @@ router.get('/', function(req, res, next) {
             res.send(error)
             return;
         }
-        res.render('hotel', {results: results})
+        res.render('hotel', {results: results, active: 'hotel'})
     })
   });
 

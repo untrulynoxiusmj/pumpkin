@@ -89,7 +89,7 @@ router.post('/login', function(req, res, next) {
 
 router.get('/', ensureCustomer, function(req, res, next) {
     console.log(req.customer)
-    res.render('index', { title: req.customer.username });
+    res.render('index', req.customer );
   });
 
 router.get('/cart', ensureCustomer, (req, res) => {

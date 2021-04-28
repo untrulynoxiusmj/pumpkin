@@ -39,7 +39,7 @@ CREATE TABLE customer
   name                VARCHAR(150) NOT NULL,
   address            VARCHAR(150),    
   phone            VARCHAR(15) NOT NULL,  
-  image               VARCHAR(150) NOT NULL,
+  image             LONGBLOB,
   bio                 VARCHAR(150),
   PRIMARY KEY         (username),
     CHECK (LENGTH(username) > 5),
