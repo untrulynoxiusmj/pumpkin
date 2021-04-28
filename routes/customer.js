@@ -6,16 +6,45 @@ const {ensureCustomer} = require('../middleware/customer')
 const db = require('../config/db');
 const { commit } = require('../config/db');
 
+
+
+
+const multer = require("multer");
+
+var upload = multer({ dest: 'uploads/' })
+
+
+
 const router = express.Router();
 
 const saltRounds = 10;
+
+
+// var storage = multer.diskStorage({
+//     destination: function (req, file, cb) {
+//       cb(null, 'storage')
+//     },
+//     filename: function (req, file, cb) {
+//       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+//       cb(null, file.fieldname + '-' + uniqueSuffix)
+//     }
+//   })
+  
+//   var upload = multer({ storage: storage })
+
+
+
+
+
+
+
 
 router.get('/signup', function(req, res, next) {
     res.render('signup', {role:'customer'});
 });
 
 
-router.post('/signup', function(req, res, next) {
+router.post('/signup', upload.single('image'), function(req, res, next) {
     let customer = req.body;
     console.log(customer.password)
     console.log(saltRounds)
@@ -26,7 +55,7 @@ router.post('/signup', function(req, res, next) {
                 res.send(err)
                 return;
             }
-            let query = `INSERT INTO customer ( username, password, name, address, phone, image, bio ) VALUES ( '${customer.username}', '${hash}', '${customer.name}', '${customer.address}', '${customer.phone}', '${customer.image}', '${customer.bio}' )`;
+            let query = `INSERT INTO customer ( username, password, name, address, phone, image, bio ) VALUES ( '${customer.username}', '${hash}', '${customer.name}', '${customer.address}', '${customer.phone}', '${req.file.filename}', '${customer.bio}' )`;
             db.query(query, function (error, results, fields) {
                 if (error) {
                     console.log(error);
