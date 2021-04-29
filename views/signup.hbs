@@ -1,26 +1,52 @@
-<form action="/{{role}}/signup" method="post" enctype="multipart/form-data">
-    <label for="">username</label><input type="text" name="username" id=""><br>
-    <label for="">password</label><input type="password" name="password" id=""><br>
-    <label for="">name</label><input type="text" name="name" id=""><br>
-    <label for="">address</label><input type="text" name="address" id=""><br>
-    <label for="">phone</label><input type="text" name="phone" id=""><br>
-    <label for="">image</label><input onchange=preview(this) type="file" id="image" name="image" accept="image/*">
-    {{!-- <input type="text" name="image" id=""><br> --}}
-    <label for="">bio</label><input type="text" name="bio" id=""><br>
+<form form action="/{{role}}/signup" method="post" enctype="multipart/form-data">
+  <div class="container">
+    <h1>Sign Up as {{role}}</h1>
+    <p>Please fill in this form to signup</p>
+    <hr>
+
+    <label for="username"><b>Username</b></label>
+    <input type="text" placeholder="Enter Username" name="username" id="username" required>
+
+    <label for="password"><b>Password</b></label>
+    <input type="password" placeholder="Enter Password" name="password" id="password" required>
+
+    <label for="name"><b>Name</b></label>
+    <input type="text" placeholder="Enter name" name="name" id="name" required>
+
+    <label for="address"><b>Address</b></label>
+    <input type="text" placeholder="Enter address" name="address" id="address" required>
+
+    <label for="phone"><b>Phone</b></label>
+    <input type="text" placeholder="Enter phone" name="phone" id="phone" required>
+
+    <label><b>Image</b></label>
+    <input onchange=preview(this) type="file" id="image" name="image" accept="image/*" required>
+
+    <img src="" alt="" id="pre">
+
+    <label for="bio"><b>Bio</b></label>
+    <input type="text" placeholder="Enter bio" name="bio" id="bio" required>
+
     {{#if hotel}}
-    <label for="">delivery</label><br>
-    <input type="radio" name="delivery" value=1 id=""><label for="">yes</label>
-    <input type="radio" name="delivery" value=0 id=""><label for="">no</label><br>
+        <label for="delivery"><b>Delivery</b></label>
+            <div class="below">
+                <input type="radio" name="delivery" value=1 id=""><label for="">Yes</label>
+                <input type="radio" name="delivery" value=0 id=""><label for="">No</label><br>
+            </div>
+        <label for="open"><b>Open</b></label>
+            <div class="below">
+                <input type="radio" name="open" value=1 id=""><label for="">Yes</label>
+                <input type="radio" name="open" value=0 id=""><label for="">No</label><br>
+            </div>
     {{/if}}
-    <input type="submit" value="Signup">
-    <img id="pre" src="" alt="">
+
+    <button type="submit" class="registerbtn">Signup</button>
+  </div>
+  
+  <div class="container signin">
+    <p>Already have an account? <a href="/{{role}}/login">Login</a>.</p>
+  </div>
 </form>
-
-{{!-- <form action="/customer/upload" enctype="multipart/form-data" method="post">
-    <label for="">image</label><input type="file" id="image" name="image" accept="image/*">
-    <input type="submit" value="Signup">
-</form> --}}
-
 
 
 <script>

@@ -1,82 +1,35 @@
-{{!-- 
-<div class="main-2">
-  <div class="card active-field capital sticky">{{role}}:</div>
-  {{#each results}}
-    <a href="/hotel/details/{{this.username}}" class="this">
-  <div class="card">
-    <div class="image">
-      <img
-        src="{{this.image}}"
-        alt=""
-        srcset=""
-        onerror=this.src=""
-      />
+<div class="container">
+    <div class="card__wrap--outer">
+        {{#each results}}
+            <div class="card__wrap--inner">
+                  <div class="card  {{#if this.open}} {{else}} grey {{/if}}">
+                      <img src="/hotel/{{this.image}}">
+                      <div class="card__item">
+                          <h2>{{this.name}}</h2>
+                      </div>
+                      <div class="card__sub">
+                          <small>{{this.username}}</small>
+                      </div>
+                      <div class="card__item">
+                          <span class="material-icons green md-18">location_on</span>&nbsp;<small>{{this.address}}</small>
+                      </div>
+                      <div class="card__sub">
+                          <span class="material-icons green md-18">phone</span>&nbsp;<small>{{this.phone}}</small>
+                      </div>
+                      <div class="card__item flexible">
+                          <small>{{this.bio}}</small>
+                      </div>
+                      <div class="card__footer">
+                        <a class="pull" href="/hotel/details/{{this.username}}"><small>View items</small></a>
+                        <a class="push">
+                          <span class="material-icons {{#if this.delivery}} green {{else}} red {{/if}}">
+                            delivery_dining
+                          </span>
+                        </a>
+                      </div>
+                  </div>
+            </div>
+        {{/each}}
     </div>
-    <div class="profile-description">
-        <div class="name">{{this.name}}</div>
-            <div class="username">{{this.username}}</div>
-            <div class="address">{{this.address}}</div>
-            <div class="phone">{{this.phone}}</div>
-    </div>
-    <div class="profile-description {{#if this.delivery}} yes {{else}} no {{/if}}">
-        &#10004;
-    </div>
-  </div>
-</a>
-  {{/each}}
-</div> --}}
-
-
-
-<div class="table-users">
-   <div class="header">Users</div>
-   
-   <table cellspacing="0">
-      <tr>
-         <th>Picture</th>
-         <th>Name</th>
-         <th>Email</th>
-         <th>Phone</th>
-         <th width="230">Comments</th>
-      </tr>
-
-      {{#each results}}
-        <a href="/hotel/details/{{this.username}}" class="this">
-            <tr>
-                <td><img src="https://i.picsum.photos/id/1005/100/100.jpg" alt="" /></td>
-                <td>{{this.name}}</td>
-                <td>{{this.username}}</td>
-                <td>{{this.address}}</td>
-                <td>{{this.phone}}</td>
-            </tr>
-        </a>
-      {{/each}}
-
-   </table>
 </div>
-
-
-<script>
-  document.getElementById("{{role}}").classList.add("active-field");
-</script>
-
-
-{{!-- {{#each results}}
-<a href="/hotel/details/{{this.username}}">
-    <div class="hotel-card">
-        <div class="hotel-image">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFikn19lf7kOVbw78FTYbCbwGWRDhavO3o1g&usqp=CAU" alt="" srcset="">
-        </div>
-        <div class="hotel-description">
-            <div class="name">{{this.name}}</div>
-            <div class="username">{{this.username}}</div>
-            <div class="address">{{this.address}}</div>
-            <div class="phone">{{this.phone}}</div>
-            <div class="bio">{{this.bio}}</div>
-        </div>
-    </div>
-</a>
-{{/each}} --}}
-
-
 

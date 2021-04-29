@@ -13,9 +13,10 @@ CREATE TABLE hotel
   name                VARCHAR(150) NOT NULL,
   address            VARCHAR(150) NOT NULL,
   phone            VARCHAR(15) NOT NULL,    
-  bio                 VARCHAR(150) NOT NULL,
+  bio                 TEXT NOT NULL,
   image               VARCHAR(150) NOT NULL,
   delivery            BOOL DEFAULT 0,
+  open                BOOL DEFAULT 1,
   PRIMARY KEY         (username),   
   CHECK (LENGTH(username) > 5),
   CHECK (LENGTH(password) > 5)   
@@ -66,8 +67,12 @@ CREATE TABLE item
   h_username            VARCHAR(150) NOT NULL,                
   name                  VARCHAR(150) NOT NULL,
   image                 VARCHAR(150) NOT NULL,
-  details               VARCHAR(150) NOT NULL,    
-  cost                  INT NOT NULL                
+  details               text NOT NULL,    
+  available             BOOL DEFAULT 1 NOT NULL,
+  cost                  INT NOT NULL,
+  CHECK (cost > 0),
+  CHECK (LENGTH(name) > 0),
+  FOREIGN KEY (h_username) REFERENCES hotel(username)
 );
 
 CREATE TABLE cart

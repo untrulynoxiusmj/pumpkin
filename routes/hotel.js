@@ -5,6 +5,11 @@ const {ensureHotel} = require('../middleware/hotel')
 
 const db = require('../config/db');
 
+
+const multer = require("multer");
+
+var upload = multer({ dest: 'uploads/hotel/' })
+
 const router = express.Router();
 
 const saltRounds = 10;
@@ -14,7 +19,8 @@ router.get('/signup', function(req, res, next) {
 });
 
 
-router.post('/signup', function(req, res, next) {
+router.post('/signup', multer({ dest: 'uploads/hotel/' }).single('image'), function(req, res, next) {
+    console.log(req.file)
     let hotel = req.body;
     console.log(hotel.password)
     console.log(saltRounds)
@@ -25,7 +31,7 @@ router.post('/signup', function(req, res, next) {
                 res.send(err)
                 return;
             }
-            let query = `INSERT INTO hotel ( username, password, name, address, phone, image, bio, delivery ) VALUES ( '${hotel.username}', '${hash}', '${hotel.name}', '${hotel.address}', '${hotel.phone}', '${hotel.image}', '${hotel.bio}', '${hotel.delivery}' )`;
+            let query = `INSERT INTO hotel ( username, password, name, address, phone, image, bio, delivery, open ) VALUES ( '${hotel.username}', '${hash}', '${hotel.name}', '${hotel.address}', '${hotel.phone}', '${req.file.filename}', "${hotel.bio}", '${hotel.delivery}', '${hotel.open}' )`;
             db.query(query, function (error, results, fields) {
                 if (error) {
                     console.log(error);
@@ -43,6 +49,28 @@ router.post('/signup', function(req, res, next) {
 
 router.get('/login', function(req, res, next) {
     res.render('login', {role:'hotel'});
+});
+
+router.get('/edit', ensureHotel, (req, res) => {
+    res.render('hotel_edit', {user: req.hotel, 'role':'hotel', hotel: true})
+})
+
+router.post('/edit', ensureHotel, function(req, res, next) {
+    // console.log(req.file)
+    let hotel = req.body;
+    console.log(hotel)
+    // console.log(hotel.password)
+    // console.log(saltRounds)
+    
+    let query = `UPDATE hotel SET name = '${hotel.name}', address = '${hotel.address}', phone = '${hotel.phone}', bio = "${hotel.bio}", delivery = '${hotel.delivery}', open = '${hotel.open}' where username='${req.hotel.username}';`
+    db.query(query, function (error, results, fields) {
+        if (error) {
+            console.log(error);
+            res.send(error)
+            return;
+        }
+        res.send(results)
+    });
 });
 
 router.post('/login', function(req, res, next) {
@@ -84,7 +112,7 @@ router.post('/login', function(req, res, next) {
 });
 
 router.get('/', function(req, res, next) {
-    let query = `SELECT username, name, address, phone, bio, image, delivery FROM hotel`;
+    let query = `SELECT username, name, address, phone, bio, image, delivery, open FROM hotel`;
     db.query(query, (error, results, fields) => {
         if (error) {
             console.log(error);
@@ -111,9 +139,9 @@ router.get('/item/create', ensureHotel, (req, res) => {
     res.render('item_form', { title: req.hotel.username });
 })
 
-router.post('/item/create', ensureHotel, (req, res) => {
+router.post('/item/create', ensureHotel, multer({ dest: 'uploads/item/' }).single('image'), (req, res) => {
     const item = req.body;
-    let query = `INSERT INTO item ( h_username, name, image, details, cost ) VALUES ( '${req.hotel.username}', '${item.name}', '${item.image}', '${item.details}', '${item.cost}' )`;
+    let query = `INSERT INTO item ( h_username, name, image, details, cost, available ) VALUES ( '${req.hotel.username}', '${item.name}', '${req.file.filename}', '${item.details}', '${item.cost}', '${item.available}' )`;
     db.query(query, function (error, results, fields) {
         if (error) {
             console.log(error);
