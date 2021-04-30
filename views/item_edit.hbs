@@ -1,0 +1,60 @@
+<form action="/hotel/item/{{item.id}}/edit" method="post">
+  <div class="container">
+    <h1>Edit item</h1>
+    <p>Please fill in this form to edit item</p>
+    <hr>
+
+    <label for="name"><b>Name</b></label>
+    <input value="{{item.name}}" value="{{item.name}}" type="text" placeholder="Enter name" name="name" id="name" required>
+
+    <label for="details"><b>Details</b></label>
+    <input value="{{item.details}}" type="text" placeholder="Enter details" name="details" id="details" required>
+
+    <label for="cost"><b>Cost</b></label>
+    <input value="{{item.cost}}" type="text" placeholder="Enter cost" name="cost" id="cost" required>
+
+    <label for="category"><b>Category</b></label>
+    <select name="category" id="category" required>
+      <option value="fast">Fast Food</option>
+      <option value="indian">Indian Food</option>
+      <option value="south">South Indian Food</option>
+      <option value="punjabi">Punjabi Food</option>
+      <option value="gujarati">Gujarati Food</option>
+      <option value="other">Other</option>
+    </select>
+
+    <label for="image"><b>Image</b></label>
+    <hr>
+    <img src="/item/{{item.image}}" alt="" id="pre">
+    <hr>
+
+    <label for="available"><b>Available</b></label>
+        <div class="below">
+            <input type="radio" name="available" value=1 {{#if item.available}} checked {{/if}} id=""><label for="">Yes</label>
+            <input type="radio" name="available" value=0 {{#unless item.available}} checked {{/unless}} id=""><label for="">No</label><br>
+        </div>
+
+    <button type="submit" class="registerbtn">Edit</button>
+  </div>
+</form>
+
+
+<script>
+    let preview = (e) => {
+        var file = document.querySelector("#image").files[0]
+        
+        var img = document.getElementById("pre");
+        var reader = new FileReader();
+        reader.onloadend = function() {
+             img.src = reader.result;
+        }
+        reader.readAsDataURL(file);
+    };
+
+    function selectElement(id, valueToSelect) {    
+      let element = document.getElementById(id);
+      element.value = valueToSelect;
+    }
+
+    selectElement("category", "{{item.category}}")
+</script>

@@ -17,6 +17,7 @@ CREATE TABLE hotel
   image               VARCHAR(150) NOT NULL,
   delivery            BOOL DEFAULT 0,
   open                BOOL DEFAULT 1,
+  delivery_cost        INT NOT NULL DEFAULT 0,
   PRIMARY KEY         (username),   
   CHECK (LENGTH(username) > 5),
   CHECK (LENGTH(password) > 5)   
@@ -40,10 +41,10 @@ CREATE TABLE customer
   name                VARCHAR(150) NOT NULL,
   address            VARCHAR(150),    
   phone            VARCHAR(15) NOT NULL,  
-  image             LONGBLOB,
-  bio                 VARCHAR(150),
+  image             VARCHAR(150) NOT NULL,
+  bio                 TEXT NOT NULL,
   PRIMARY KEY         (username),
-    CHECK (LENGTH(username) > 5),
+  CHECK (LENGTH(username) > 5),
   CHECK (LENGTH(password) > 5)                           
 );
 
@@ -61,6 +62,7 @@ CREATE TABLE delivery
   CHECK (LENGTH(password) > 5)             
 );
 
+
 CREATE TABLE item
 (
   id                    INT PRIMARY KEY AUTO_INCREMENT,                
@@ -70,6 +72,7 @@ CREATE TABLE item
   details               text NOT NULL,    
   available             BOOL DEFAULT 1 NOT NULL,
   cost                  INT NOT NULL,
+  category              ENUM('fast', 'indian', 'south', 'punjabi', 'gujarati', 'other') DEFAULT 'other',
   CHECK (cost > 0),
   CHECK (LENGTH(name) > 0),
   FOREIGN KEY (h_username) REFERENCES hotel(username)
@@ -78,9 +81,11 @@ CREATE TABLE item
 CREATE TABLE cart
 (
   c_username               VARCHAR(150) NOT NULL,                
-  i_id                     VARCHAR(150) NOT NULL,
+  i_id                     INT,
   i_quantity               VARCHAR(150) DEFAULT 1,
-  PRIMARY KEY         (c_username, i_id)
+  PRIMARY KEY         (c_username, i_id),
+  FOREIGN KEY (c_username) REFERENCES customer(username),
+  FOREIGN KEY (i_id) REFERENCES item(id)
 );
 
 CREATE TABLE cart_deliver
@@ -88,7 +93,9 @@ CREATE TABLE cart_deliver
   c_username               VARCHAR(150) NOT NULL,                
   h_username                    VARCHAR(150) NOT NULL,
   delivery_chosen          BOOL DEFAULT 0,
-  PRIMARY KEY         (c_username, h_username)
+  PRIMARY KEY         (c_username, h_username),
+  FOREIGN KEY (c_username) REFERENCES customer(username),
+  FOREIGN KEY (h_username) REFERENCES hotel(username)
 );
 
 <!-- CREATE TABLE deliver
@@ -112,5 +119,9 @@ CREATE TABLE order_t
   address                    VARCHAR(150) NOT NULL,
   timestamp                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   payment_status             ENUM('PENDING', 'COMPLETED', 'CANCELLED') DEFAULT 'PENDING',
-  order_status               ENUM('PENDING', 'COMPLETED', 'CANCELLED') DEFAULT 'PENDING'
+  order_status               ENUM('PENDING', 'COMPLETED', 'CANCELLED') DEFAULT 'PENDING',
+  
+  <!-- FOREIGN KEY (c_username) REFERENCES id(username),
+  FOREIGN KEY (i_id) REFERENCES item(username),
+  FOREIGN KEY (d_username) REFERENCES delivery(username), -->
 );

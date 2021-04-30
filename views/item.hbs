@@ -10,6 +10,9 @@
                     <div class="card__sub">
                         <small>{{this.cost}}</small>
                     </div>
+                    <div class="card__sub capital">
+                        <small>{{this.category}}</small>
+                    </div>
                     <div class="card__item flexible">
                         <small>{{this.details}}</small>
                     </div>
@@ -17,8 +20,11 @@
                         <small>Reading Time: 4min</small>
                     </div> --}}
                     <div class="card__footer">
-                      <a class="pull" href="#"><small>Add to Cart</small></a>
-                      <a class="push" href="#"><small>{{this.available}}</small></a>
+                        <form action="/customer/cart/{{this.id}}" method="post">
+                            <input type="submit" value="Add to Cart">
+                        </form>
+                        {{!-- <a class="pull" href="/cart/{{this.id}}"><small>Add to Cart</small></a> --}}
+                        <a class="push" href="#"><small>{{this.available}}</small></a>
                     </div>
                 </div>
           </div>

@@ -141,7 +141,8 @@ router.get('/item/create', ensureHotel, (req, res) => {
 
 router.post('/item/create', ensureHotel, multer({ dest: 'uploads/item/' }).single('image'), (req, res) => {
     const item = req.body;
-    let query = `INSERT INTO item ( h_username, name, image, details, cost, available ) VALUES ( '${req.hotel.username}', '${item.name}', '${req.file.filename}', '${item.details}', '${item.cost}', '${item.available}' )`;
+    console.log(item)
+    let query = `INSERT INTO item ( h_username, name, image, details, cost, category, available ) VALUES ( '${req.hotel.username}', '${item.name}', '${req.file.filename}', '${item.details}', '${item.cost}', '${item.category}', '${item.available}' )`;
     db.query(query, function (error, results, fields) {
         if (error) {
             console.log(error);
@@ -151,6 +152,42 @@ router.post('/item/create', ensureHotel, multer({ dest: 'uploads/item/' }).singl
         res.redirect(`/hotel/details/${req.hotel.username}`)
     });
 })
+
+router.get('/item/:id/edit', ensureHotel, (req, res) => {
+    let query = `SELECT * from item where h_username='${req.hotel.username}' AND id='${req.params.id}'`;
+    db.query(query, function (error, results, fields) {
+        if (error) {
+            console.log(error);
+            res.send(error)
+            return;
+        }
+        if (results.length==0) {
+            res.send("No item found")
+            return
+        }
+        let item=results[0];
+        res.render('item_edit', {user: req.hotel, 'role':'hotel', 'item':item, hotel: true})
+    });
+})
+
+router.post('/item/:id/edit', ensureHotel, function(req, res, next) {
+    // console.log(req.file)
+    let item = req.body;
+    console.log(item)
+    // console.log(item.password)
+    // console.log(saltRounds)
+    
+    let query = `UPDATE item SET name = '${item.name}', details = "${item.details}", cost = '${item.cost}', category = "${item.category}", available = '${item.available}' where h_username='${req.hotel.username}' AND id='${req.params.id}';`
+    db.query(query, function (error, results, fields) {
+        if (error) {
+            console.log(error);
+            res.send(error)
+            return;
+        }
+        res.send(results)
+    });
+});
+
 
 router.get('/order/:status', ensureHotel, (req, res) => {
     let query = `SELECT o.*, i.id as i_id, i.name as i_name, i.image as i_image, i.details as i_details, i.cost as i_cost, h.username as h_username, h.name as h_name, h.address as h_address, h.phone as h_phone, h.bio as h_bio, h.image as h_image, h.delivery as h_delivery FROM order_t o, item i, hotel h WHERE o.i_id = i.id AND i.h_username='${req.hotel.username}' AND h.username ='${req.hotel.username}' AND o.order_status='${req.params.status}' ORDER BY o.timestamp DESC;`

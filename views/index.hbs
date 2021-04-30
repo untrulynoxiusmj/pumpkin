@@ -1,9 +1,39 @@
-<h1>{{username}}</h1>
+{{!-- <h1>{{username}}</h1>
 <h1>{{name}}</h1>
 <h1>{{address}}</h1>
 <h1>{{phone}}</h1>
 <img src="/{{image}}" alt="" srcset="">g
 <h1>{{bio}}</h1>
 
+ --}}
 
+<div class="container">
+    <div class="card__wrap--outer">
+            <div class="card__wrap--inner">
+                  <div class="card">
+                      <img src="/customer/{{this.image}}">
+                      <div class="card__item">
+                          <h2>{{this.name}}</h2>
+                      </div>
+                      <div class="card__sub">
+                          <small>{{this.username}}</small>
+                      </div>
+                      <div class="card__item">
+                          <span class="material-icons green md-18">location_on</span>&nbsp;<small>{{this.address}}</small>
+                      </div>
+                      <div class="card__sub">
+                          <span class="material-icons green md-18">phone</span>&nbsp;<small>{{this.phone}}</small>
+                      </div>
+                      <div class="card__item flexible">
+                          <small>{{this.bio}}</small>
+                      </div>
+                      <div class="card__footer">
+                        <a class="pull" href="#"><small>View</small></a>
+                        <a class="push">#
+                        </a>
+                      </div>
+                  </div>
+            </div>
+    </div>
+</div>
 

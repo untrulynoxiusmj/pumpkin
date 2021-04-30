@@ -5,23 +5,23 @@
     <hr>
 
     <label for="username"><b>Username</b></label>
-    <input disabled value={{user.username}} type="text" placeholder="Enter Username" name="username" id="username" required>
+    <input disabled value="{{user.username}}" type="text" placeholder="Enter Username" name="username" id="username" required>
 
     <label for="name"><b>Name</b></label>
-    <input value={{user.name}} type="text" placeholder="Enter name" name="name" id="name" required>
+    <input value="{{user.name}}" type="text" placeholder="Enter name" name="name" id="name" required>
 
     <label for="address"><b>Address</b></label>
-    <input value={{user.address}} type="text" placeholder="Enter address" name="address" id="address" required>
+    <input value="{{user.address}}" type="text" placeholder="Enter address" name="address" id="address" required>
 
     <label for="phone"><b>Phone</b></label>
-    <input value={{user.phone}} type="text" placeholder="Enter phone" name="phone" id="phone" required>
+    <input value="{{user.phone}}" type="text" placeholder="Enter phone" name="phone" id="phone" required>
 
-    <label for="bio"><b>Image</b></label>
+    <label for="image"><b>Image</b></label>
     <hr>
     <img src="/{{role}}/{{user.image}}" alt="" id="pre">
 
     <label for="bio"><b>Bio</b></label>
-    <input value={{user.bio}} type="text" placeholder="Enter bio" name="bio" id="bio" required>
+    <input value="{{user.bio}}" type="text" placeholder="Enter bio" name="bio" id="bio" required>
 
     {{#if hotel}}
         <label for="delivery"><b>Delivery</b></label>

@@ -11,7 +11,7 @@ const { commit } = require('../config/db');
 
 const multer = require("multer");
 
-var upload = multer({ dest: 'uploads/' })
+var upload = multer({ dest: 'uploads/customer' })
 
 
 
@@ -43,9 +43,9 @@ router.get('/signup', function(req, res, next) {
     res.render('signup', {role:'customer'});
 });
 
-router.get('/edit', ensureCustomer, function(req, res, next) {
-    res.render('edit', req.customer);
-});
+// router.get('/edit', ensureCustomer, function(req, res, next) {
+//     res.render('edit', req.customer);
+// });
 
 
 router.post('/signup', upload.single('image'), function(req, res, next) {
@@ -107,7 +107,7 @@ router.post('/login', function(req, res, next) {
                 const token = jwt.sign({
                     username: results[0].username,
                     role : 'customer'
-                  }, process.env.JWT_SECRET, { expiresIn: '20m' });
+                  }, process.env.JWT_SECRET, { expiresIn: '24h' });
                 res.cookie('token', token).send({
                     token: token,
                     hotel : results
@@ -127,7 +127,7 @@ router.get('/', ensureCustomer, function(req, res, next) {
 
 router.get('/cart', ensureCustomer, (req, res) => {
     // let query = `SELECT * from cart where c_username='${req.customer.username}'`;
-    let query = `SELECT c.*, i.id as i_id, i.name as i_name, i.image as i_image, i.details as i_details, i.cost as i_cost, h.username as h_username, h.name as h_name, h.address as h_address, h.phone as h_phone, h.bio as h_bio, h.image as h_image, h.delivery as h_delivery, cd.delivery_chosen FROM cart c, item i, hotel h, cart_deliver cd WHERE c.c_username = '${req.customer.username}' AND c.i_id = i.id AND i.h_username=h.username AND cd.c_username=c.c_username AND cd.h_username=h.username ORDER BY h.username;`
+    let query = `SELECT c.*, i.id as i_id, i.name as i_name, i.image as i_image, i.details as i_details, i.cost as i_cost, i.available, h.username as h_username, h.name as h_name, h.address as h_address, h.phone as h_phone, h.bio as h_bio, h.image as h_image, h.delivery as h_delivery, h.delivery_cost as h_delivery_cost, open,  cd.delivery_chosen FROM cart c, item i, hotel h, cart_deliver cd WHERE c.c_username = '${req.customer.username}' AND c.i_id = i.id AND i.h_username=h.username AND cd.c_username=c.c_username AND cd.h_username=h.username ORDER BY h.username;`
     db.query(query, function (error, results, fields) {
         if (error) {
             console.log(error);
@@ -135,22 +135,38 @@ router.get('/cart', ensureCustomer, (req, res) => {
             return;
         }
         console.log(results)
+        let total_cost=0;
+        let delivery_cost=0;
         let ObjResultKeyHotel = new Object();
         results.forEach(element => {
+            element['total_i_cost']=element['i_cost']*element['i_quantity']
+            total_cost += element['total_i_cost'];
             if (!ObjResultKeyHotel[element.h_username]){
                 ObjResultKeyHotel[element.h_username] = new Object({
+                    data: {
+                        h_username: element.h_username,
+                        h_name: element.h_name,
+                        h_address: element.h_address,
+                        h_phone: element.h_phone,
+                        h_image: element.h_image,
+                        h_delivery: element.h_delivery,
+                        open: element.open,
+                    },
+                    total_h_cost : element.total_i_cost,
+                    h_delivery_cost : element.h_delivery_cost,
                     delivery_provided: element.h_delivery ,
                     delivery_chosen: element.delivery_chosen,
                     orders: Array(element)
                 });
             }
             else{
+                ObjResultKeyHotel[element.h_username]['total_h_cost'] += element.total_i_cost
                 ObjResultKeyHotel[element.h_username]['orders'].push(element);
             }
         });
         console.log(ObjResultKeyHotel)
         // res.send(ObjResultKeyHotel)
-        res.render('cart', {hotelOrders:ObjResultKeyHotel, customer:req.customer})
+        res.render('cart', {hotelOrders:ObjResultKeyHotel, total_cost:total_cost, customer:req.customer})
     });
 })
 
@@ -293,7 +309,7 @@ router.post('/order', ensureCustomer, (req, res) => {
 
 router.post('/cart/:id', ensureCustomer, (req, res) => {
     if (req.params.id){
-        let query = `INSERT INTO cart ( c_username, i_id ) VALUES ( '${req.customer.username}', (SELECT id from item where id='${req.params.id}') )`;
+        let query = `INSERT INTO cart ( c_username, i_id ) VALUES ( '${req.customer.username}', (SELECT id from item where id='${req.params.id}' AND available=1 AND (SELECT open from hotel where username=h_username) ) )`;
         let Anotherquery = `INSERT INTO cart_deliver ( c_username, h_username ) VALUES ( '${req.customer.username}', (SELECT h_username from item where id='${req.params.id}') )`;
         db.query(query, function (error, results, fields) {
             if (error) {
@@ -310,6 +326,25 @@ router.post('/cart/:id', ensureCustomer, (req, res) => {
                 res.send(results)
             });
             // res.send(results)
+        });
+    }
+    else{
+        res.send("Invalid item id")
+    }
+})
+
+router.post('/cart/:id/quantity', ensureCustomer, (req, res) => {
+    // res.send(req.body)
+    if (req.params.id){
+        let query = `UPDATE cart SET i_quantity='${req.body.quantity}' where c_username='${req.customer.username}' AND i_id='${req.params.id}'`;
+        // let Anotherquery = `INSERT INTO cart_deliver ( c_username, h_username ) VALUES ( '${req.customer.username}', (SELECT h_username from item where id='${req.params.id}') )`;
+        db.query(query, function (error, results, fields) {
+            if (error) {
+                console.log(error);
+                res.send(error)
+                return;
+            }
+            res.redirect("/customer/cart")
         });
     }
     else{
