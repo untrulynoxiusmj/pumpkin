@@ -6,6 +6,12 @@ const {ensureDelivery} = require('../middleware/delivery')
 const db = require('../config/db');
 const { commit } = require('../config/db');
 
+
+const multer = require("multer");
+
+var upload = multer({ dest: 'uploads/delivery' })
+
+
 const router = express.Router();
 
 const saltRounds = 10;
@@ -15,7 +21,7 @@ router.get('/signup', function(req, res, next) {
 });
 
 
-router.post('/signup', function(req, res, next) {
+router.post('/signup',  upload.single('image'), function(req, res, next) {
     let delivery = req.body;
     console.log(delivery.password)
     console.log(saltRounds)
@@ -26,7 +32,7 @@ router.post('/signup', function(req, res, next) {
                 res.send(err)
                 return;
             }
-            let query = `INSERT INTO delivery ( username, password, name, address, phone, image, bio ) VALUES ( '${delivery.username}', '${hash}', '${delivery.name}', '${delivery.address}', '${delivery.phone}', '${delivery.image}', '${delivery.bio}' )`;
+            let query = `INSERT INTO delivery ( username, password, name, address, phone, image, bio ) VALUES ( '${delivery.username}', '${hash}', '${delivery.name}', '${delivery.address}', '${delivery.phone}', '${req.file.filename}', '${delivery.bio}' )`;
             db.query(query, function (error, results, fields) {
                 if (error) {
                     console.log(error);
@@ -89,7 +95,7 @@ router.post('/login', function(req, res, next) {
 
 router.get('/', ensureDelivery, function(req, res, next) {
     console.log(req.delivery)
-    res.render('index', { title: req.delivery.username });
+    res.render('index', req.delivery);
   });
 
 router.get('/order/unassigned', ensureDelivery, function(req, res, next) {

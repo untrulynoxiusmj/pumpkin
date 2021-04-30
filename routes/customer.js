@@ -142,6 +142,7 @@ router.get('/cart', ensureCustomer, (req, res) => {
             element['total_i_cost']=element['i_cost']*element['i_quantity']
             total_cost += element['total_i_cost'];
             if (!ObjResultKeyHotel[element.h_username]){
+                if (element.h_delivery && element.delivery_chosen) delivery_cost+=element.h_delivery_cost;
                 ObjResultKeyHotel[element.h_username] = new Object({
                     data: {
                         h_username: element.h_username,
@@ -166,7 +167,7 @@ router.get('/cart', ensureCustomer, (req, res) => {
         });
         console.log(ObjResultKeyHotel)
         // res.send(ObjResultKeyHotel)
-        res.render('cart', {hotelOrders:ObjResultKeyHotel, total_cost:total_cost, customer:req.customer})
+        res.render('cart', {hotelOrders:ObjResultKeyHotel, delivery_cost:delivery_cost, total_cost:total_cost, total_order_cost: delivery_cost+total_cost, customer:req.customer})
     });
 })
 
@@ -186,7 +187,7 @@ router.post("/cart/deliver", ensureCustomer, (req, res) => {
 
 router.get('/order/:status', ensureCustomer, (req, res) => {
     // let query = `SELECT * from cart where c_username='${req.customer.username}'`;
-    let query = `SELECT o.*, i.id as i_id, i.name as i_name, i.image as i_image, i.details as i_details, i.cost as i_cost, h.username as h_username, h.name as h_name, h.address as h_address, h.phone as h_phone, h.bio as h_bio, h.image as h_image, h.delivery as h_delivery FROM order_t o, item i, hotel h WHERE o.i_id = i.id AND i.h_username=h.username AND o.c_username='${req.customer.username}' AND order_status='${req.params.status}' ORDER BY o.timestamp DESC;`
+    let query = `SELECT o.*, i.id as i_id, i.name as i_name, i.image as i_image, i.details as i_details, i.cost as i_cost, i.available as i_available, i.category as i_category, h.username as h_username, h.name as h_name, h.address as h_address, h.phone as h_phone, h.bio as h_bio, h.image as h_image, h.delivery as h_delivery, h.open as h_open, h.delivery_cost as h_delivery_cost FROM order_t o, item i, hotel h WHERE o.i_id = i.id AND i.h_username=h.username AND o.c_username='${req.customer.username}' AND order_status='${req.params.status}' ORDER BY o.timestamp DESC;`
     db.query(query, function (error, results, fields) {
         if (error) {
             console.log(error);
@@ -199,7 +200,10 @@ router.get('/order/:status', ensureCustomer, (req, res) => {
             if (!ObjResult[element.timestamp]){
                 ObjResult[element.timestamp] = new Object()
                 ObjResult[element.timestamp][element.h_username] = new Object()
-                ObjResult[element.timestamp][element.h_username][element.d_username] = new Object(
+                ObjResult[element.timestamp][element.h_username]['data'] = element;
+                ObjResult[element.timestamp][element.h_username]['order_info'] = new Object()
+                ObjResult[element.timestamp][element.h_username]['order_info'][element.delivery_chosen] = new Object()
+                ObjResult[element.timestamp][element.h_username]['order_info'][element.delivery_chosen][element.d_username] = new Object(
                     {
                         delivery_provided: element.h_delivery ,
                         delivery_chosen: element.delivery_chosen,
@@ -209,7 +213,10 @@ router.get('/order/:status', ensureCustomer, (req, res) => {
             else{
                 if (!ObjResult[element.timestamp][element.h_username]){
                     ObjResult[element.timestamp][element.h_username] = new Object()
-                    ObjResult[element.timestamp][element.h_username][element.d_username] = new Object(
+                    ObjResult[element.timestamp][element.h_username]['data'] = element;
+                    ObjResult[element.timestamp][element.h_username]['order_info'] = new Object()
+                    ObjResult[element.timestamp][element.h_username]['order_info'][element.delivery_chosen] = new Object()
+                    ObjResult[element.timestamp][element.h_username]['order_info'][element.delivery_chosen][element.d_username] = new Object(
                         {
                             delivery_provided: element.h_delivery ,
                             delivery_chosen: element.delivery_chosen,
@@ -217,8 +224,9 @@ router.get('/order/:status', ensureCustomer, (req, res) => {
                         })
                 }
                 else{
-                    if (!ObjResult[element.timestamp][element.h_username][element.d_username]){
-                        ObjResult[element.timestamp][element.h_username][element.d_username] = new Object(
+                    if (!ObjResult[element.timestamp][element.h_username]['order_info'][element.delivery_chosen]){
+                        ObjResult[element.timestamp][element.h_username]['order_info'][element.delivery_chosen] = new Object()
+                        ObjResult[element.timestamp][element.h_username]['order_info'][element.delivery_chosen][element.d_username] = new Object(
                             {
                                 delivery_provided: element.h_delivery ,
                                 delivery_chosen: element.delivery_chosen,
@@ -226,7 +234,18 @@ router.get('/order/:status', ensureCustomer, (req, res) => {
                             })
                     }
                     else{
-                        ObjResult[element.timestamp][element.h_username][element.d_username]['orders'].push(element)
+                        if (!ObjResult[element.timestamp][element.h_username]['order_info'][element.delivery_chosen][element.d_username]){
+                            // ObjResult[element.timestamp][element.h_username]['order_info'][element.delivery_chosen] = new Object()
+                            ObjResult[element.timestamp][element.h_username]['order_info'][element.delivery_chosen][element.d_username] = new Object(
+                                {
+                                    delivery_provided: element.h_delivery ,
+                                    delivery_chosen: element.delivery_chosen,
+                                    orders: Array(element)
+                                })
+                        }
+                        else{
+                            ObjResult[element.timestamp][element.h_username]['order_info'][element.delivery_chosen][element.d_username]['orders'].push(element)
+                        }
                     }
                 }
             }
@@ -279,7 +298,7 @@ router.post('/order', ensureCustomer, (req, res) => {
     let deleteQuery = `DELETE from cart where c_username = '${req.customer.username}';`
 
 
-    let query = `INSERT INTO order_t ( c_username, i_id, i_quantity, cost, delivery_chosen, address ) SELECT c.* , (SELECT cost from item where id=c.i_id)*c.i_quantity as cost, (SELECT delivery_chosen from cart_deliver where h_username in (SELECT h_username from item where id=c.i_id) AND c_username='${req.customer.username}'), '${req.body.address}' FROM cart c WHERE c.c_username = '${req.customer.username}';`
+    let query = `INSERT INTO order_t ( c_username, i_id, i_quantity, i_cost, delivery_chosen, address ) SELECT c.* , (SELECT cost from item where id=c.i_id) as i_cost, (SELECT delivery_chosen from cart_deliver where h_username in (SELECT h_username from item where id=c.i_id) AND c_username='${req.customer.username}'), '${req.body.address}' FROM cart c WHERE c.c_username = '${req.customer.username}';`
 
     db.query(query, function (error, results, fields) {
         if (error) {

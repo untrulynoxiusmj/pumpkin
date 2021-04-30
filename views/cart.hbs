@@ -33,14 +33,16 @@
                         <footer class="content">
                             {{!-- <span class="qt-minus">-</span> --}}
                             {{!-- <span class="qt-plus">+</span> --}}
-                            <form action="/customer/cart/deliver" method="post">
-                                {{!-- <label for="">Delivery</label> --}}
-                                <span class="material-icons qt green md-36">
-                                    delivery_dining
-                                </span>
-                                <span class="qt"><input onchange="submit()" type="radio" name={{@key}} value=1 id="" {{#if this.delivery_chosen}} checked {{/if}}>Yes</span>
-                                <span class="qt"><input onchange="submit()" type="radio" name={{@key}} value=0 id="" {{#unless this.delivery_chosen}} checked {{/unless}}>No</span>
-                            </form>
+                            {{#if this.delivery_provided}}
+                                <form action="/customer/cart/deliver" method="post">
+                                    {{!-- <label for="">Delivery</label> --}}
+                                    <span class="material-icons qt green md-36">
+                                        delivery_dining
+                                    </span>
+                                    <span class="qt"><input onchange="submit()" type="radio" name={{@key}} value=1 id="" {{#if this.delivery_chosen}} checked {{/if}}>Yes</span>
+                                    <span class="qt"><input onchange="submit()" type="radio" name={{@key}} value=0 id="" {{#unless this.delivery_chosen}} checked {{/unless}}>No</span>
+                                </form>
+                            {{/if}}
 
                             <h2 class="full-price danger-block">
                                 {{total_h_cost}}
@@ -66,7 +68,7 @@
 		</div>
 	</header>
 
-	<div class="container">
+	<div class="container shift">
 
 		<section id="cart"> 
 
@@ -137,19 +139,17 @@
 
 			<div class="left">
 				<h2 class="subtotal">Subtotal: &#x20b9; <span>{{total_cost}}</span></h2>
-				<h3 class="tax">Taxes (5%): &#x20b9; <span>8.2</span></h3>
-				<h3 class="shipping">Shipping: &#x20b9; <span>5.00</span></h3>
+				<h3 class="shipping">Shipping: &#x20b9; <span>{{delivery_cost}}</span></h3>
 			</div>
+
 
 			<div class="right">
-				<h1 class="total">Total: &#x20b9; <span>177.16</span></h1>
-				<a class="btn">Checkout</a>
+                <h2 class="total">Total: &#x20b9; <span>{{total_order_cost}}</span></h2>
+                <form action="/customer/order" method="post">
+                    <input type="text" name="address" value={{customer.address}} id="">
+                    <button type="submit" class="btn">Checkout</a>
+                </form>
 			</div>
-
-            <form action="/customer/order" method="post">
-                <input type="text" name="address" value={{customer.address}} id="">
-                <input type="submit" value="Order">
-            </form>
 
 		</div>
 	</footer>

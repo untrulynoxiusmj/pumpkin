@@ -230,8 +230,8 @@ float: right;
 
 .container {
 width: 100%;
-max-width: 960px;
-margin: 100px auto;
+/* max-width: 960px; */
+/* margin: 100px auto; */
 }
 
 img {
@@ -428,17 +428,17 @@ a {
   
 
   .danger-block{
-    background-color: brown !important;
+    background-color: rgb(158, 84, 84) !important;
   }
 
   .danger-text{
-    color: brown !important;
+    color: rgb(158, 84, 84) !important;
   }
 
 
 
   .head{
-    border: 1px solid brown;
+    border: 1px solid rgb(158, 84, 84);
   }
 
   /* Overwrite default styles of hr */
@@ -582,8 +582,9 @@ a {
   
   .container {
     font-family: 'Open Sans', sans-serif;
-    margin: 0 auto;
-    width: 980px;
+    /* margin: 0 auto; */
+    margin-left: 25%;
+    width: 55%;
   }
   
   #cart {
@@ -691,7 +692,7 @@ a {
   }
   
   .product h1 {
-    color: #53b5aa;
+    color: #519c92;
     font-size: 25px;
     font-weight: 300;
     margin: 17px 0 20px 0;
@@ -715,7 +716,7 @@ a {
   }
   
   .product footer .full-price {
-    background: #53b5aa;
+    background: #519c92;
     color: #fff;
     float: right;
     font-size: 22px;
@@ -758,7 +759,7 @@ a {
   }
   
   .qt-plus:hover, .qt-minus:hover {
-    background: #53b5aa;
+    background: #366e68;
     color: #fff;
     cursor: pointer;
   }
@@ -811,7 +812,7 @@ a {
   }
   
   .btn {
-    background: #53b5aa;
+    background: #386964;
     border: 1px solid #999;
     border-style: none none solid none;
     cursor: pointer;
@@ -854,9 +855,9 @@ a {
     right: -40px;
   }
   
-  .red {
+  /* .red {
     background: #cb5a5e;
-  }
+  } */
   
   .yellow {
     background: #f1c40f;
@@ -882,7 +883,7 @@ a {
   .border {
     /* background: #4291881a; */
     /* border: 1px solid #429188; */
-    margin: 4em;
+    /* margin: 4em; */
     padding: 2em;
     border-radius: 1em;
   }
@@ -902,3 +903,34 @@ a {
   }
 
   
+
+  .shift {
+    /* padding-left: 5em; */
+    /* background-color: blueviolet; */
+    margin-left: 30%;
+    border: 1px solid #356b6596;
+  }
+
+
+
+
+  .layer-1 {
+    margin-left: 10% !important;
+  }
+
+  .layer-2 {
+    margin-left: 15% !important;
+  }
+
+
+  .layer-3 {
+    margin-left: 20% !important;
+  }
+
+  .layer-4 {
+    margin-left: 25% !important;
+  }
+
+  .layer-5 {
+    margin-left: 30% !important;
+  }

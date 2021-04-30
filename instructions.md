@@ -81,8 +81,8 @@ CREATE TABLE item
 CREATE TABLE cart
 (
   c_username               VARCHAR(150) NOT NULL,                
-  i_id                     INT,
-  i_quantity               VARCHAR(150) DEFAULT 1,
+  i_id                     INT NOT NULL,
+  i_quantity               INT NOT NULL DEFAULT 1,
   PRIMARY KEY         (c_username, i_id),
   FOREIGN KEY (c_username) REFERENCES customer(username),
   FOREIGN KEY (i_id) REFERENCES item(id)
@@ -111,17 +111,16 @@ CREATE TABLE order_t
 (
   id                         INT PRIMARY KEY AUTO_INCREMENT,                
   c_username                 VARCHAR(150) NOT NULL,                
-  i_id                       VARCHAR(150) NOT NULL,
-  i_quantity                 VARCHAR(150),
-  cost                       VARCHAR(150) NOT NULL,
+  i_id                       INT NOT NULL,
+  i_quantity                 INT NOT NULL DEFAULT 1,
+  i_cost                       INT NOT NULL,
   delivery_chosen            BOOL DEFAULT 0,
   d_username                 VARCHAR(150),
   address                    VARCHAR(150) NOT NULL,
   timestamp                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   payment_status             ENUM('PENDING', 'COMPLETED', 'CANCELLED') DEFAULT 'PENDING',
   order_status               ENUM('PENDING', 'COMPLETED', 'CANCELLED') DEFAULT 'PENDING',
-  
-  <!-- FOREIGN KEY (c_username) REFERENCES id(username),
-  FOREIGN KEY (i_id) REFERENCES item(username),
-  FOREIGN KEY (d_username) REFERENCES delivery(username), -->
+  FOREIGN KEY (c_username) REFERENCES customer(username),
+  FOREIGN KEY (i_id) REFERENCES item(id),
+  FOREIGN KEY (d_username) REFERENCES delivery(username)
 );
