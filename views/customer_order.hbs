@@ -5,7 +5,7 @@
                 {{!-- <section id="cart">      --}}
                         {{!-- <article class="product"> --}}
                             <div class="content">
-                                <h1 >{{@key}}</h1>
+                                <h1>{{@key}}</h1>
                             </div>
                         {{!-- </article> --}}
                 {{!-- </section> --}}
@@ -99,10 +99,10 @@
                                             <section id="cart"> 
                                                     <article class="product">
                                                         <header>
-                                                            <a class="remove">
-                                                                <img src="/item/{{this.i_image}}" alt="">
-                                                                <h3>Remove product</h3>
-                                                            </a>
+                                                                <a class="remove">
+                                                                    <img src="/item/{{this.i_image}}" alt="">
+                                                                    <h3>Cancel order</h3>
+                                                                </a>
                                                         </header>
 
                                                         <div class="content">
@@ -112,19 +112,20 @@
                                                         </div>
 
                                                         <footer class="content">
-                                                            <form action="/customer//cart/{{this.i_id}}/quantity" method="post">
                                                                     <span class="material-icons-outlined qt green md-18">
                                                                         shopping_bag
                                                                     </span>
-                                                                    <span class="qt"><input min="1" onchange="submit()" type="number" name=quantity value={{this.i_quantity}} id=""></span>
-                                                                </form>
-
+                                                                    <span class="qt"><input disabled min="1" type="number" name=quantity value={{this.i_quantity}} id=""></span>
+                                                                    
+                                                                    <form action="/customer/order/{{this.id}}/cancel" method="post">
+                                                                        <span class="qt"><input type="submit" value="Cancel"></span>
+                                                                    </form>
                                                             <h2 class="full-price">
-                                                                {{this.total_i_cost}}
+                                                                {{this.total_i_cost}} {{this.payment_status}}
                                                             </h2>
 
                                                             <h2 class="price">
-                                                                {{this.i_cost}}
+                                                                {{this.cost}} {{this.order_status}}
                                                             </h2>
                                                         </footer>
                                                     </article>

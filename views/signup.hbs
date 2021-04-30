@@ -22,7 +22,7 @@
     <label><b>Image</b></label>
     <input onchange=preview(this) type="file" id="image" name="image" accept="image/*" required>
 
-    <img src="" alt="" id="pre">
+    <img src="" alt="" id="pre" style="display: none;>
 
     <label for="bio"><b>Bio</b></label>
     <input type="text" placeholder="Enter bio" name="bio" id="bio" required>
@@ -54,6 +54,7 @@
         var file = document.querySelector("#image").files[0]
         
         var img = document.getElementById("pre");
+        img.style.display = 'block';
         var reader = new FileReader();
         reader.onloadend = function() {
              img.src = reader.result;

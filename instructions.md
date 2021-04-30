@@ -113,7 +113,7 @@ CREATE TABLE order_t
   c_username                 VARCHAR(150) NOT NULL,                
   i_id                       INT NOT NULL,
   i_quantity                 INT NOT NULL DEFAULT 1,
-  i_cost                       INT NOT NULL,
+  cost                       INT NOT NULL,
   delivery_chosen            BOOL DEFAULT 0,
   d_username                 VARCHAR(150),
   address                    VARCHAR(150) NOT NULL,

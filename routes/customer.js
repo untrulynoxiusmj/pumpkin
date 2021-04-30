@@ -218,6 +218,7 @@ router.get('/order/:status', ensureCustomer, (req, res) => {
                     ObjResult[element.timestamp][element.h_username]['order_info'][element.delivery_chosen] = new Object()
                     ObjResult[element.timestamp][element.h_username]['order_info'][element.delivery_chosen][element.d_username] = new Object(
                         {
+                            delivery_person_data: element,
                             delivery_provided: element.h_delivery ,
                             delivery_chosen: element.delivery_chosen,
                             orders: Array(element)
@@ -228,6 +229,7 @@ router.get('/order/:status', ensureCustomer, (req, res) => {
                         ObjResult[element.timestamp][element.h_username]['order_info'][element.delivery_chosen] = new Object()
                         ObjResult[element.timestamp][element.h_username]['order_info'][element.delivery_chosen][element.d_username] = new Object(
                             {
+                                delivery_person_data: element,
                                 delivery_provided: element.h_delivery ,
                                 delivery_chosen: element.delivery_chosen,
                                 orders: Array(element)
@@ -238,6 +240,7 @@ router.get('/order/:status', ensureCustomer, (req, res) => {
                             // ObjResult[element.timestamp][element.h_username]['order_info'][element.delivery_chosen] = new Object()
                             ObjResult[element.timestamp][element.h_username]['order_info'][element.delivery_chosen][element.d_username] = new Object(
                                 {
+                                    delivery_person_data: element,
                                     delivery_provided: element.h_delivery ,
                                     delivery_chosen: element.delivery_chosen,
                                     orders: Array(element)
@@ -277,7 +280,7 @@ router.post('/order/:id/cancel', ensureCustomer, (req, res) => {
             res.send(error)
             return;
         }
-        res.redirect(`/customer/order`)
+        res.redirect(`/customer/order/cancelled`)
     });
 })
 
@@ -298,7 +301,7 @@ router.post('/order', ensureCustomer, (req, res) => {
     let deleteQuery = `DELETE from cart where c_username = '${req.customer.username}';`
 
 
-    let query = `INSERT INTO order_t ( c_username, i_id, i_quantity, i_cost, delivery_chosen, address ) SELECT c.* , (SELECT cost from item where id=c.i_id) as i_cost, (SELECT delivery_chosen from cart_deliver where h_username in (SELECT h_username from item where id=c.i_id) AND c_username='${req.customer.username}'), '${req.body.address}' FROM cart c WHERE c.c_username = '${req.customer.username}';`
+    let query = `INSERT INTO order_t ( c_username, i_id, i_quantity, cost, delivery_chosen, address ) SELECT c.* , (SELECT cost from item where id=c.i_id)*c.i_quantity as cost, (SELECT delivery_chosen from cart_deliver where h_username in (SELECT h_username from item where id=c.i_id) AND c_username='${req.customer.username}'), '${req.body.address}' FROM cart c WHERE c.c_username = '${req.customer.username}';`
 
     db.query(query, function (error, results, fields) {
         if (error) {
@@ -356,6 +359,25 @@ router.post('/cart/:id/quantity', ensureCustomer, (req, res) => {
     // res.send(req.body)
     if (req.params.id){
         let query = `UPDATE cart SET i_quantity='${req.body.quantity}' where c_username='${req.customer.username}' AND i_id='${req.params.id}'`;
+        // let Anotherquery = `INSERT INTO cart_deliver ( c_username, h_username ) VALUES ( '${req.customer.username}', (SELECT h_username from item where id='${req.params.id}') )`;
+        db.query(query, function (error, results, fields) {
+            if (error) {
+                console.log(error);
+                res.send(error)
+                return;
+            }
+            res.redirect("/customer/cart")
+        });
+    }
+    else{
+        res.send("Invalid item id")
+    }
+})
+
+router.post('/cart/:id/remove', ensureCustomer, (req, res) => {
+    // res.send(req.body)
+    if (req.params.id){
+        let query = `DELETE from cart where c_username='${req.customer.username}' AND i_id='${req.params.id}'`;
         // let Anotherquery = `INSERT INTO cart_deliver ( c_username, h_username ) VALUES ( '${req.customer.username}', (SELECT h_username from item where id='${req.params.id}') )`;
         db.query(query, function (error, results, fields) {
             if (error) {

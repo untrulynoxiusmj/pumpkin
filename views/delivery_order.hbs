@@ -1,67 +1,108 @@
 {{#each objResult}}
-    {{!-- {{#if this.delivery_provided}} --}}
-    {{!-- <form action="/customer/cart/deliver" method="post">
-        <input onchange="submit()" type="radio" name={{@key}} value=1 id="" {{#if this.delivery_chosen}} checked {{/if}}><label for="">yes</label>
-        <input onchange="submit()" type="radio" name={{@key}} value=0 id="" {{#unless this.delivery_chosen}} checked {{/unless}}><label for="">no</label><br>
-    </form> --}}
-    {{!-- {{/if}} --}}
-    <h1>{{@key}}</h1>
-    {{#each this}}
-        <h2>{{@key}}</h2>
-        
-            <form action="/delivery/order/accept/{{@key}}/{{@../key}}" method="post">
-                    <button type="submit">accept</button>
-            </form>
+    <div class="border">
+        <header id="site-header layer-1">
+            <div class="container layer-1">
+                {{!-- <section id="cart">      --}}
+                        {{!-- <article class="product"> --}}
+                            <div class="content">
+                                <h1 >{{@key}}</h1>
+                            </div>
+                        {{!-- </article> --}}
+                {{!-- </section> --}}
+            </div>
+        </header>     {{!-- timestamp --}}
         {{#each this}}
-            <h3>{{@key}}</h3>
-            {{!-- <h3>{{this.delivery_provided}}</h3>
-            <h3>{{this.delivery_chosen}}</h3> --}}
-            {{!-- <h3>{{this.c_username}}</h3> --}}
-            {{#each orders}}
-                <label>{{this.id}}</label>
-                <label>{{this.c_username}}</label>
-                <label>{{this.i_id}}</label>
-                <strong><label>{{this.i_quantity}}</label></strong>
-                <strong><label>{{cost}}</label></strong>
-                <strong><label>{{this.delivery_chosen}}</label></strong>
-                <strong><label>{{this.d_username}}</label></strong>
-                <label>{{this.i_name}}</label>
-                <label>{{this.i_image}}</label>
-                <label>{{this.i_details}}</label>
-                <label>{{this.h_username}}</label>
-                <label>{{this.h_name}}</label>
-                <label>{{this.timestamp}}</label>
-                <label>{{this.payment_status}}</label>
-                <label>{{this.order_status}}</label>
-                <br>
-                <br>
+            {{!-- <h2>{{@key}}</h2>  --}}
+                 {{!-- <header id="site-header head"> --}}
+                    <div class="container layer-2">
+                                    <div class="content">
+                                        <h1>{{@key}}</h1>
+                                    </div>
+
+                                    <form action="/delivery/order/accept/{{@key}}/{{@../key}}" method="post">
+                                        <button type="submit">accept</button>
+                                    </form>
+                                    
+                    </div>
+                {{!-- </header> --}}
+
                 
-            <form action="/delivery/order/{{this.id}}/payment/completed" method="post">
-            <button type="submit">payment complete?</button>
-        </form>
-        <form action="/delivery/order/{{this.id}}/status/completed" method="post">
-            <button type="submit">order complete?</button>
-        </form>
-        
-            <br>
-            {{/each}}
+                
+
+                {{#each this}}
+
+                    {{!-- {{@key}} --}}
+                    {{!-- {{#ifCond @key "1"}}
+                        <div class="container layer-3">
+                                        <div class="content">
+                                            <h1 >Requires Delivery</h1>
+                                        </div>
+                        </div>
+                    {{else}}
+                    <div class="container layer-3">
+                                        <div class="content">
+                                            <h1 >No Delivery Required</h1>
+                                        </div>
+                        </div>
+                    {{/ifCond}} --}}
+
+                        
+                    <div class="container layer-3">
+                                    <div class="content">
+                                        <h1>{{@key}}</h1>
+                                    </div>
+                                    
+                    </div>
+
+                                <div class="container layer-4">
+
+                                        {{#each orders}}
+
+                                            <section id="cart"> 
+                                                    <article class="product">
+                                                        <header>
+                                                                <a class="remove">
+                                                                    <img src="/item/{{this.i_image}}" alt="">
+                                                                    <h3>Cancel order</h3>
+                                                                </a>
+                                                        </header>
+
+                                                        <div class="content">
+
+                                                            <h1>{{this.i_name}}  {{this.available}}</h1>
+                                                            {{this.i_details}}
+                                                        </div>
+
+                                                        <footer class="content">
+                                                                    <span class="material-icons-outlined qt green md-18">
+                                                                        shopping_bag
+                                                                    </span>
+                                                                    <span class="qt"><input disabled min="1" type="number" name=quantity value={{this.i_quantity}} id=""></span>
+                                                                    
+                                                                    
+                                                                    <form action="/delivery/order/{{this.id}}/payment/completed" method="post">
+                                                                        <span class="qt"><button type="submit">payment complete?</button></span>
+                                                                    </form>
+                                                                    <form action="/delivery/order/{{this.id}}/status/completed" method="post">
+                                                                        <span class="qt"><button type="submit">order complete?</button></span>
+                                                                    </form>
+    
+                                                            <h2 class="full-price">
+                                                                {{this.total_i_cost}} {{this.order_status}}
+                                                            </h2>
+
+                                                            <h2 class="price">
+                                                                {{this.cost}} {{this.payment_status}}
+                                                            </h2>
+                                                        </footer>
+                                                    </article>
+                                            </section>
+
+                                        {{/each}}
+
+                                    </div>
+                        
+                    {{/each}}
         {{/each}}
-    {{/each}}
-        <br>
-        <br>
-        <br>
+    </div>
 {{/each}}
-
-{{customer.username}}
-{{customer.name}}
-{{customer.address}}
-{{customer.phone}}
-{{customer.image}}
-{{customer.bio}}
-
-<br>
-<form action="/customer/order" method="post">
-    <input type="text" name="address" value={{customer.address}} id="">
-    <input type="submit" value="Order">
-
-</form>

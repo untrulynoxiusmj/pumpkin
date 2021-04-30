@@ -691,8 +691,15 @@ a {
     width: 75%;
   }
   
-  .product h1 {
+  .product h1{
     color: #519c92;
+    font-size: 25px;
+    font-weight: 300;
+    margin: 17px 0 20px 0;
+  }
+
+  h1{
+    color: #403e66;
     font-size: 25px;
     font-weight: 300;
     margin: 17px 0 20px 0;

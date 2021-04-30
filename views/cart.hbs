@@ -103,6 +103,14 @@
                                 {{!-- <input type="submit" value="Change"> --}}
                                 {{!-- <span class="qt"><input onchange="submit()" type="radio" name={{@key}} value=0 id="" {{#unless this.delivery_chosen}} checked {{/unless}}>No</span> --}}
                             </form>
+                            
+
+                            <form action="/customer/cart/{{this.i_id}}/remove" method="post">
+                                    {{!-- <label for="">Delivery</label> --}}
+                                    <span class="qt">
+                                        <input type="submit" value="Remove">
+                                    </span>
+                                </form>
 
                         <h2 class="full-price">
                             {{this.total_i_cost}}
