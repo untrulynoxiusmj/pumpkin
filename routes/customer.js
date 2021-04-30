@@ -66,7 +66,7 @@ router.post('/signup', upload.single('image'), function(req, res, next) {
                     res.send(error)
                     return;
                 }
-                res.send(results)
+                res.redirect("/customer/login")
             });
         });
     } catch (error) {
@@ -108,10 +108,7 @@ router.post('/login', function(req, res, next) {
                     username: results[0].username,
                     role : 'customer'
                   }, process.env.JWT_SECRET, { expiresIn: '24h' });
-                res.cookie('token', token).send({
-                    token: token,
-                    hotel : results
-                })
+                res.cookie('token', token).redirect("/customer")
             });
         });
     } catch (error) {
@@ -122,7 +119,7 @@ router.post('/login', function(req, res, next) {
 
 router.get('/', ensureCustomer, function(req, res, next) {
     console.log(req.customer)
-    res.render('index', req.customer );
+    res.render('index', {auth:true, user : req.customer, customer:true, role:'customer'} );
   });
 
 router.get('/cart', ensureCustomer, (req, res) => {
@@ -167,7 +164,7 @@ router.get('/cart', ensureCustomer, (req, res) => {
         });
         console.log(ObjResultKeyHotel)
         // res.send(ObjResultKeyHotel)
-        res.render('cart', {hotelOrders:ObjResultKeyHotel, delivery_cost:delivery_cost, total_cost:total_cost, total_order_cost: delivery_cost+total_cost, customer:req.customer})
+        res.render('cart', {role: "customer", hotelOrders:ObjResultKeyHotel, delivery_cost:delivery_cost, total_cost:total_cost, total_order_cost: delivery_cost+total_cost, customer:req.customer})
     });
 })
 
@@ -181,7 +178,7 @@ router.post("/cart/deliver", ensureCustomer, (req, res) => {
             return;
         }
         console.log(results)
-        res.send(results)
+        res.redirect("/customer/cart")
     });
 })
 
@@ -218,7 +215,6 @@ router.get('/order/:status', ensureCustomer, (req, res) => {
                     ObjResult[element.timestamp][element.h_username]['order_info'][element.delivery_chosen] = new Object()
                     ObjResult[element.timestamp][element.h_username]['order_info'][element.delivery_chosen][element.d_username] = new Object(
                         {
-                            delivery_person_data: element,
                             delivery_provided: element.h_delivery ,
                             delivery_chosen: element.delivery_chosen,
                             orders: Array(element)
@@ -229,7 +225,6 @@ router.get('/order/:status', ensureCustomer, (req, res) => {
                         ObjResult[element.timestamp][element.h_username]['order_info'][element.delivery_chosen] = new Object()
                         ObjResult[element.timestamp][element.h_username]['order_info'][element.delivery_chosen][element.d_username] = new Object(
                             {
-                                delivery_person_data: element,
                                 delivery_provided: element.h_delivery ,
                                 delivery_chosen: element.delivery_chosen,
                                 orders: Array(element)
@@ -240,7 +235,6 @@ router.get('/order/:status', ensureCustomer, (req, res) => {
                             // ObjResult[element.timestamp][element.h_username]['order_info'][element.delivery_chosen] = new Object()
                             ObjResult[element.timestamp][element.h_username]['order_info'][element.delivery_chosen][element.d_username] = new Object(
                                 {
-                                    delivery_person_data: element,
                                     delivery_provided: element.h_delivery ,
                                     delivery_chosen: element.delivery_chosen,
                                     orders: Array(element)
@@ -255,7 +249,7 @@ router.get('/order/:status', ensureCustomer, (req, res) => {
         });
         console.log(ObjResult)
         // res.send(ObjResult)
-        res.render('customer_order', {objResult:ObjResult, customer:req.customer})
+        res.render('customer_order', { role: "customer", objResult:ObjResult, customer:req.customer})
     });
 })
 
@@ -314,18 +308,20 @@ router.post('/order', ensureCustomer, (req, res) => {
         //     let insertQuery = `INSERT INTO order_t ( c_username, i_id, i_quantity, cost, d (SELECT cost from item where id=c.i_id)*c.i_quantity as cost, '${req.body.address}' as address FROM cart c WHERE c.c_username = '${req.customer.username}';`
         // })
 
+        db.query(deleteQuery, (error, deleteResult, fields) => {
+            if (error) {
+                console.log(error);
+                res.send(error)
+                return;
+            }
+            console.log(results)
+            console.log(deleteResult)
+            res.redirect("/customer/order")
+        })
+
         
-        res.send(results)
-        // db.query(deleteQuery, (error, deleteResult, fields) => {
-        //     if (error) {
-        //         console.log(error);
-        //         res.send(error)
-        //         return;
-        //     }
-        //     console.log(results)
-        //     console.log(deleteResult)
-        //     res.send(results)
-        // })
+        
+        
     });
 })
 
@@ -336,16 +332,16 @@ router.post('/cart/:id', ensureCustomer, (req, res) => {
         db.query(query, function (error, results, fields) {
             if (error) {
                 console.log(error);
-                res.send(error)
+                res.redirect(cart)
                 return;
             }
             db.query(Anotherquery, function (error, results, fields) {
                 if (error) {
                     console.log(error);
-                    res.send(error)
+                    res.redirect("/customer/cart")
                     return;
                 }
-                res.send(results)
+                res.redirect(cart)
             });
             // res.send(results)
         });
@@ -423,7 +419,7 @@ router.post('/cart/:id/remove', ensureCustomer, (req, res) => {
 // })
 
 router.get('/logout', (req, res) => {
-    res.clearCookie("token").send("Logout successful");
+    res.clearCookie("token").redirect("/");
 })
 
 

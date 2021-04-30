@@ -1,3 +1,4 @@
+<center><h1>{{hotel}}</h1></center> 
 <div class="container">
     <div class="card__wrap--outer">
         {{#each results}}
@@ -19,13 +20,29 @@
                     {{!-- <div class="card__item">
                         <small>Reading Time: 4min</small>
                     </div> --}}
-                    <div class="card__footer">
-                        <form action="/customer/cart/{{this.id}}" method="post">
-                            <input type="submit" value="Add to Cart">
-                        </form>
+
+                    {{#if ../customer}}
+                        <div class="card__footer">
+                            <form action="/customer/cart/{{this.id}}" method="post">
+                                <input type="submit" value="Add to Cart">
+                            </form>
                         {{!-- <a class="pull" href="/cart/{{this.id}}"><small>Add to Cart</small></a> --}}
-                        <a class="push" href="#"><small>{{this.available}}</small></a>
-                    </div>
+                        {{!-- <a class="push" href="#"><small>{{this.available}}</small></a> --}}
+                        </div>
+                    {{/if}}
+
+                    {{!-- <h1>{{../customer}}</h1>
+                    <h1>{{../authorized}}</h1> --}}
+
+                    {{#if ../authorized}}
+                        <div class="card__footer">
+                            <form action="/hotel/item/{{this.id}}/edit" method="get">
+                                <input type="submit" value="Edit">
+                            </form>
+                        {{!-- <a class="pull" href="/cart/{{this.id}}"><small>Add to Cart</small></a> --}}
+                        {{!-- <a class="push" href="#"><small>{{this.available}}</small></a> --}}
+                        </div>
+                    {{/if}}
                 </div>
           </div>
         {{/each}}

@@ -6,12 +6,12 @@ module.exports = {
     ensureDelivery: (req, res, next) => {
         console.log(req.cookies)
         const token = req.cookies.token;
-        if (!token) return res.send("Denied")
+        if (!token) return res.redirect("/delivery/login")
         try {
             jwt.verify(token, process.env.JWT_SECRET, function(err, decoded) {
                 if (err) {
                     console.log(err);
-                    res.send(err)
+                    res.redirect("/delivery/login")
                     return;
                 }
                 console.log(decoded) // bar
@@ -19,15 +19,15 @@ module.exports = {
                 db.query(query, function (error, results, fields) {
                     if (error) {
                         console.log(error);
-                        res.send(error)
+                        res.redirect("/delivery/login")
                         return;
                     }
                     if (results.length==0){
-                        res.send("you are not registered as delivery")
+                        res.redirect("/delivery/login")
                         return;
                     }
                     if (decoded.role!=='delivery'){
-                        res.send("You are not a delivery")
+                        res.redirect("/delivery/login")
                         return;
                     }
                     req.delivery = results[0];
@@ -35,7 +35,7 @@ module.exports = {
                 });
             })
         } catch(err) {
-            res.send(err)
+            res.redirect("/delivery/login")
         }
     }
 }

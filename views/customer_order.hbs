@@ -30,17 +30,8 @@
                                         {{this.data.h_address}}
                                     </div>
                                     <footer class="content">
-                                        {{#if this.delivery_provided}}
-                                            <form action="/customer/cart/deliver" method="post">
-                                                <span class="material-icons qt green md-36">
-                                                    delivery_dining
-                                                </span>
-                                                <span class="qt"><input onchange="submit()" type="radio" name={{@key}} value=1 id="" {{#if this.delivery_chosen}} checked {{/if}}>Yes</span>
-                                                <span class="qt"><input onchange="submit()" type="radio" name={{@key}} value=0 id="" {{#unless this.delivery_chosen}} checked {{/unless}}>No</span>
-                                            </form>
-                                        {{/if}}
                                         <h2 class="full-price danger-block">
-                                            {{total_h_cost}}
+                                             {{this.data.h_delivery_cost}}
                                         </h2>
                                         <h2 class="price">
                                             {{h_delivery_cost}}
@@ -121,11 +112,11 @@
                                                                         <span class="qt"><input type="submit" value="Cancel"></span>
                                                                     </form>
                                                             <h2 class="full-price">
-                                                                {{this.total_i_cost}} {{this.payment_status}}
+                                                                {{this.order_status}}
                                                             </h2>
 
-                                                            <h2 class="price">
-                                                                {{this.cost}} {{this.order_status}}
+                                                            <h2 class="price  danger-text">
+                                                                {{this.cost}} {{this.payment_status}}
                                                             </h2>
                                                         </footer>
                                                     </article>

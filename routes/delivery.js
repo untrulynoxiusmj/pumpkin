@@ -39,7 +39,7 @@ router.post('/signup',  upload.single('image'), function(req, res, next) {
                     res.send(error)
                     return;
                 }
-                res.send(results)
+                res.redirect("/delivery/login")
             });
         });
     } catch (error) {
@@ -81,10 +81,7 @@ router.post('/login', function(req, res, next) {
                     username: results[0].username,
                     role : 'delivery'
                   }, process.env.JWT_SECRET, { expiresIn: '24h' });
-                res.cookie('token', token).send({
-                    token: token,
-                    hotel : results
-                })
+                res.cookie('token', token).redirect("/delivery")
             });
         });
     } catch (error) {
@@ -95,12 +92,12 @@ router.post('/login', function(req, res, next) {
 
 router.get('/', ensureDelivery, function(req, res, next) {
     console.log(req.delivery)
-    res.render('index', req.delivery);
+    res.render('index', { user: req.delivery, role:'delivery'});
   });
 
 router.get('/order/unassigned', ensureDelivery, function(req, res, next) {
     console.log(req.delivery)
-    let query = `SELECT o.*, i.id as i_id, i.name as i_name, i.image as i_image, i.details as i_details, i.cost as i_cost, h.username as h_username, h.name as h_name, h.address as h_address, h.phone as h_phone, h.bio as h_bio, h.image as h_image, h.delivery as h_delivery FROM order_t o, item i, hotel h WHERE o.i_id = i.id AND i.h_username=h.username AND o.d_username IS NULL and delivery_chosen=1  AND o.order_status='PENDING';`
+    let query = `SELECT o.*, i.id as i_id, i.name as i_name, i.image as i_image, i.details as i_details, i.cost as i_cost, h.username as h_username, h.name as h_name, h.address as h_address, h.phone as h_phone, h.bio as h_bio, h.image as h_image, h.delivery as h_delivery, h.delivery_cost as h_delivery_cost FROM order_t o, item i, hotel h WHERE o.i_id = i.id AND i.h_username=h.username AND o.d_username IS NULL and delivery_chosen=1  AND o.order_status='PENDING';`
     db.query(query, function (error, results, fields) {
         if (error) {
             console.log(error);
@@ -113,7 +110,9 @@ router.get('/order/unassigned', ensureDelivery, function(req, res, next) {
             if (!ObjResult[element.c_username]){
                 ObjResult[element.c_username] = new Object()
                 ObjResult[element.c_username][element.h_username] = new Object()
-                ObjResult[element.c_username][element.h_username][element.timestamp] = new Object(
+                ObjResult[element.c_username][element.h_username]['data'] = element;
+                ObjResult[element.c_username][element.h_username]['order_info'] = new Object()
+                ObjResult[element.c_username][element.h_username]['order_info'][element.timestamp] = new Object(
                     {
                         delivery_provided: element.h_delivery ,
                         delivery_chosen: element.delivery_chosen,
@@ -123,7 +122,9 @@ router.get('/order/unassigned', ensureDelivery, function(req, res, next) {
             else{
                 if (!ObjResult[element.c_username][element.h_username]){
                     ObjResult[element.c_username][element.h_username] = new Object()
-                    ObjResult[element.c_username][element.h_username][element.timestamp] = new Object(
+                    ObjResult[element.c_username][element.h_username]['data'] = element;
+                    ObjResult[element.c_username][element.h_username]['order_info'] = new Object()
+                    ObjResult[element.c_username][element.h_username]['order_info'][element.timestamp] = new Object(
                         {
                             delivery_provided: element.h_delivery ,
                             delivery_chosen: element.delivery_chosen,
@@ -131,8 +132,8 @@ router.get('/order/unassigned', ensureDelivery, function(req, res, next) {
                         })
                 }
                 else{
-                    if (!ObjResult[element.c_username][element.h_username][element.timestamp]){
-                        ObjResult[element.c_username][element.h_username][element.timestamp] = new Object(
+                    if (!ObjResult[element.c_username][element.h_username]['order_info'][element.timestamp]){
+                        ObjResult[element.c_username][element.h_username]['order_info'][element.timestamp] =  new Object(
                             {
                                 delivery_provided: element.h_delivery ,
                                 delivery_chosen: element.delivery_chosen,
@@ -140,14 +141,14 @@ router.get('/order/unassigned', ensureDelivery, function(req, res, next) {
                             })
                     }
                     else{
-                        ObjResult[element.c_username][element.h_username][element.timestamp]['orders'].push(element)
+                        ObjResult[element.c_username][element.h_username]['order_info'][element.timestamp]['orders'].push(element)
                     }
                 }
             }
         });
         console.log(ObjResult)
         // res.send(ObjResult)
-        res.render('delivery_order', {objResult:ObjResult, customer:req.customer})
+        res.render('delivery_order', {role: "delivery", objResult:ObjResult, customer:req.customer})
     });
     // res.render('index', { title: req.delivery.username });
 });
@@ -167,7 +168,7 @@ router.get('/order/:status', ensureDelivery, function(req, res, next) {
 
 
 
-    let query = `SELECT o.*, i.id as i_id, i.name as i_name, i.image as i_image, i.details as i_details, i.cost as i_cost, h.username as h_username, h.name as h_name, h.address as h_address, h.phone as h_phone, h.bio as h_bio, h.image as h_image, h.delivery as h_delivery FROM order_t o, item i, hotel h WHERE o.i_id = i.id AND i.h_username=h.username AND o.d_username='${req.delivery.username}' AND o.order_status='${req.params.status}' ORDER BY o.timestamp DESC;`
+    let query = `SELECT o.*, i.id as i_id, i.name as i_name, i.image as i_image, i.details as i_details, i.cost as i_cost, h.username as h_username, h.name as h_name, h.address as h_address, h.phone as h_phone, h.bio as h_bio, h.image as h_image, h.delivery as h_delivery, h.delivery_cost as h_delivery_cost FROM order_t o, item i, hotel h WHERE o.i_id = i.id AND i.h_username=h.username AND o.d_username='${req.delivery.username}' AND o.order_status='${req.params.status}' ORDER BY o.timestamp DESC;`
     db.query(query, function (error, results, fields) {
         if (error) {
             console.log(error);
@@ -180,7 +181,9 @@ router.get('/order/:status', ensureDelivery, function(req, res, next) {
             if (!ObjResult[element.c_username]){
                 ObjResult[element.c_username] = new Object()
                 ObjResult[element.c_username][element.h_username] = new Object()
-                ObjResult[element.c_username][element.h_username][element.timestamp] = new Object(
+                ObjResult[element.c_username][element.h_username]['data'] = element;
+                ObjResult[element.c_username][element.h_username]['order_info'] = new Object()
+                ObjResult[element.c_username][element.h_username]['order_info'][element.timestamp] = new Object(
                     {
                         delivery_provided: element.h_delivery ,
                         delivery_chosen: element.delivery_chosen,
@@ -190,7 +193,9 @@ router.get('/order/:status', ensureDelivery, function(req, res, next) {
             else{
                 if (!ObjResult[element.c_username][element.h_username]){
                     ObjResult[element.c_username][element.h_username] = new Object()
-                    ObjResult[element.c_username][element.h_username][element.timestamp] = new Object(
+                    ObjResult[element.c_username][element.h_username]['data'] = element;
+                    ObjResult[element.c_username][element.h_username]['order_info'] = new Object()
+                    ObjResult[element.c_username][element.h_username]['order_info'][element.timestamp] = new Object(
                         {
                             delivery_provided: element.h_delivery ,
                             delivery_chosen: element.delivery_chosen,
@@ -198,8 +203,8 @@ router.get('/order/:status', ensureDelivery, function(req, res, next) {
                         })
                 }
                 else{
-                    if (!ObjResult[element.c_username][element.h_username][element.timestamp]){
-                        ObjResult[element.c_username][element.h_username][element.timestamp] = new Object(
+                    if (!ObjResult[element.c_username][element.h_username]['order_info'][element.timestamp]){
+                        ObjResult[element.c_username][element.h_username]['order_info'][element.timestamp] =  new Object(
                             {
                                 delivery_provided: element.h_delivery ,
                                 delivery_chosen: element.delivery_chosen,
@@ -207,14 +212,14 @@ router.get('/order/:status', ensureDelivery, function(req, res, next) {
                             })
                     }
                     else{
-                        ObjResult[element.c_username][element.h_username][element.timestamp]['orders'].push(element)
+                        ObjResult[element.c_username][element.h_username]['order_info'][element.timestamp]['orders'].push(element)
                     }
                 }
             }
         });
         console.log(ObjResult)
         // res.send(ObjResult)
-        res.render('delivery_order', {objResult:ObjResult, customer:req.customer})
+        res.render('delivery_order', {role: "delivery", objResult:ObjResult, customer:req.customer})
     });
 
 });
@@ -228,7 +233,7 @@ router.post('/order/accept/:h_username/:c_username', ensureDelivery, (req, res) 
             return;
         }
         console.log(results)
-        res.send(results)
+        res.redirect("/delivery/order/pending")
     });
 })
 
@@ -262,7 +267,7 @@ router.post('/order/:id/payment/completed', ensureDelivery, (req, res) => {
 
 
 router.get('/logout', (req, res) => {
-    res.clearCookie("token").send("Logout successful");
+    res.clearCookie("token").redirect("/");
 })
 
 module.exports = router;

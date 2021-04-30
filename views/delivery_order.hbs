@@ -15,21 +15,39 @@
             {{!-- <h2>{{@key}}</h2>  --}}
                  {{!-- <header id="site-header head"> --}}
                     <div class="container layer-2">
+                        <section id="cart">     
+                                <article class="product">
+                                    <header>
+                                        <a class="remove">
+                                            <img src="/hotel/{{this.data.h_image}}" alt="">
+                                            <h3>Remove product</h3>
+                                        </a>
+                                    </header>
                                     <div class="content">
-                                        <h1>{{@key}}</h1>
+                                        <h1 class="danger-text" >{{this.data.h_name}}</h1>
+                                        {{this.data.h_username}}
+                                        {{this.data.h_phone}}
+                                        {{this.data.h_address}}
                                     </div>
+                                    <footer class="content">
+                                        <h2 class="full-price danger-block">
+                                            {{this.data.h_delivery_cost}}
+                                        </h2>
 
-                                    <form action="/delivery/order/accept/{{@key}}/{{@../key}}" method="post">
-                                        <button type="submit">accept</button>
-                                    </form>
-                                    
+                                        <form action="/delivery/order/accept/{{@key}}/{{@../key}}" method="post">
+                                        <button type="submit">Accept</button>
+                                        </form>
+                                        
+                                    </footer>
+                                </article>
+                        </section>
                     </div>
                 {{!-- </header> --}}
 
                 
                 
 
-                {{#each this}}
+                {{#each this.order_info}}
 
                     {{!-- {{@key}} --}}
                     {{!-- {{#ifCond @key "1"}}
