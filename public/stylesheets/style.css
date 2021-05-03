@@ -582,8 +582,8 @@ a {
   
   .container {
     font-family: 'Open Sans', sans-serif;
-    /* margin: 0 auto; */
-    margin-left: 25%;
+    margin: 0 auto;
+    /* margin-left: 25%; */
     width: 55%;
   }
   
@@ -1006,3 +1006,4 @@ body{
   top: 0;
   width: 100%;
 }
+

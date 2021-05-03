@@ -63,7 +63,7 @@ router.post('/edit', ensureHotel, function(req, res, next) {
     // console.log(hotel.password)
     // console.log(saltRounds)
     
-    let query = `UPDATE hotel SET name = '${hotel.name}', address = '${hotel.address}', phone = '${hotel.phone}', bio = "${hotel.bio}", delivery = '${hotel.delivery}', open = '${hotel.open}' where username='${req.hotel.username}';`
+    let query = `UPDATE hotel SET name = '${hotel.name}', address = '${hotel.address}', phone = '${hotel.phone}', bio = "${hotel.bio}", delivery_cost = '${hotel.delivery_cost}', delivery = '${hotel.delivery}', open = '${hotel.open}' where username='${req.hotel.username}';`
     db.query(query, function (error, results, fields) {
         if (error) {
             console.log(error);

@@ -20,9 +20,16 @@
     <hr>
     <img src="/{{role}}/{{user.image}}" alt="" id="pre">
 
+    <hr>
+
     <label for="bio"><b>Bio</b></label>
     <input value="{{user.bio}}" type="text" placeholder="Enter bio" name="bio" id="bio" required>
 
+    <label for="delivery_cost"><b>Delivery cost</b></label>
+    <input value="{{user.delivery_cost}}" min=0 type="number" placeholder="Enter Delivery Cost" name="delivery_cost" id="delivery_cost" required>
+
+    <hr>
+    
     {{#if hotel}}
         <label for="delivery"><b>Delivery</b></label>
             <div class="below">
