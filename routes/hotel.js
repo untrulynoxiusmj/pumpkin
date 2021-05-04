@@ -112,7 +112,12 @@ router.post('/login', function(req, res, next) {
     }
 });
 
-router.get('/', function(req, res, next) {
+router.get('/', ensureHotel, function(req, res, next) {
+    console.log(req.delivery)
+    res.render('index', { user: req.hotel, role:'hotel'});
+  });
+
+router.get('/list', function(req, res, next) {
     let query = `SELECT username, name, address, phone, bio, image, delivery, open FROM hotel`;
     db.query(query, (error, results, fields) => {
         if (error) {
