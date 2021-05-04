@@ -10,7 +10,7 @@
                     <div class="card-stacked">
                     <div class="card-content">
                         <span class="card-title activator grey-text text-darken-4">
-                            <h5>{{data.h_name}} @ {{total_h_cost}} {{#if this.delivery_chosen}} + {{h_delivery_cost}} {{/if}}</h5>
+                            <h5>{{data.h_name}} @ {{total_h_cost}} {{#if this.delivery_chosen}}{{#if this.delivery_provided}} + {{h_delivery_cost}} {{/if}}{{/if}}</h5>
                             <br>
                             {{data.h_username}}
                             <br>
@@ -19,14 +19,16 @@
                             {{data.h_address}}
                             <br>
                             {{data.bio}}
-                            <i class="material-icons right">more_vert</i>
                         </span>
                     </div>
 
                     <div class="card-action">
-                        <p>
+
+                        
+                            <p>
+                        
                             {{#if this.delivery_provided}}
-                                <form action="/customer/cart/deliver" method="post">
+                                <form class="line moved" action="/customer/cart/deliver" method="post">
                                     <span>
                                         {{!-- <label for=""><i class="material-icons small">delivery_dining</i></label> --}}
                                         Delivery:
@@ -40,9 +42,24 @@
                                         </label>
                                     </span>
                                 </form>
+
+                                
+
                             {{/if}}
-                        </p>
+
+                            <button class="btn waves-effect waves-light {{#if data.h_delivery}}{{else}}non-primary{{/if}}">
+                                    {{data.h_delivery_cost}}
+                                    <i class="material-icons right">delivery_dining</i>
+                                    <i class="material-icons right">{{#if data.h_delivery}}check_circle{{else}}cancel{{/if}}</i>
+                                </button>
+                                <button class="btn waves-effect waves-light {{#if data.open}}{{else}}non-primary{{/if}}">
+                                    {{#if data.open}} Open {{else}} Closed {{/if}}
+                                    <i class="material-icons right">{{#if data.open}}check_circle{{else}}cancel{{/if}}</i>
+                                </button>
+                        
+                            </p>
                     </div>
+
                     </div>
                 </div>
             </div>
@@ -66,25 +83,32 @@
                 </div>
 
                 <div class="card-action">
-                    <p>
+                    {{!-- <p> --}}
 
-                        <div class="flex">
-                            <form action="/customer/cart/{{this.i_id}}/remove" method="post">  
-                            <button class="btn waves-effect waves-light" type="submit" name="action">
-                                Remove
-                                <i class="material-icons right">delete</i>
+                            <button class="btn waves-effect waves-light line">
+                                    <i class="material-icons">add_shopping_cart</i>
                             </button>
-                            {{!-- <button type="submit" name="action" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></button> --}}
-                            </form> 
                             
                                 {{!-- <span for="">Quantity</span> --}}
-                            <form action="/customer//cart/{{this.i_id}}/quantity" method="post">
-                                <input min="1" onchange="submit()" type="number" name=quantity value={{this.i_quantity}} id=""></span>
+                            <form class="line" action="/customer//cart/{{this.i_id}}/quantity" method="post">
+                                <input class="little" min="1" onchange="submit()" type="number" name=quantity value={{this.i_quantity}} id=""></span>
                             </form>
-                        </div>
-                        
+
+                            <form class="line" action="/customer/cart/{{this.i_id}}/remove" method="post">  
+                                <button class="btn waves-effect waves-light" type="submit" name="action">
+                                    <i class="material-icons">delete</i>
+                                </button>
+                                {{!-- <button type="submit" name="action" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></button> --}}
+                            </form> 
+
+                            <button class="btn waves-effect waves-light {{#if this.available}}{{else}}non-primary{{/if}}">
+                                {{!-- {{#if this.available}} this.Available {{else}} Closed {{/if}} --}}
+                                <i class="material-icons">{{#if this.available}}check_circle{{else}}cancel{{/if}}</i>
+                            </button>
                             
-                    </p>
+                            
+                            
+                    {{!-- </p> --}}
                 </div>
 
                 <div class="card-reveal">

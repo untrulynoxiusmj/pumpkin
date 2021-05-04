@@ -1,3 +1,59 @@
+<div class="centered flex">
+    {{#each results}}
+        <div class="card sticky-action">
+
+            <div class="card-image waves-effect waves-block waves-light">
+                <img class="activator" src="/hotel/{{this.image}}">
+            </div>
+            <div class="card-content">
+                <span class="card-title activator grey-text text-darken-4">
+                    {{this.name}}  
+                    <i class="material-icons right">more_vert</i>
+                </span>
+            </div>
+
+            <div class="card-action">
+                <p>
+                    <a href="/hotel/details/{{this.username}}" class="btn waves-effect waves-light">
+                        
+                        <i class="material-icons">visibility</i>
+                    </a>
+                    <button class="btn waves-effect waves-light {{#if this.delivery}}{{else}}non-primary{{/if}}">
+                        <i class="material-icons">delivery_dining</i>
+                        <i class="material-icons">{{#if this.delivery}}check_circle{{else}}cancel{{/if}}</i>
+                    </button>
+                    <button class="btn waves-effect waves-light {{#if this.open}}{{else}}non-primary{{/if}}">
+                        {{#if this.open}} Open {{else}} Closed {{/if}}
+                        <i class="material-icons right">{{#if this.open}}check_circle{{else}}cancel{{/if}}</i>
+                    </button>
+                </p>
+            </div>
+
+            <div class="card-reveal">
+                <span class="card-title grey-text text-darken-4">
+                    <i class="material-icons right">close</i>
+                </span>
+                <p>{{this.name}} <br> {{this.phone}} <br> {{this.address}} <br> {{this.bio}}</p>
+            </div>
+        </div>
+    {{/each}}
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <div class="centered">
     
     <ul class="collection">
@@ -17,6 +73,14 @@
     </ul>
 
 </div>
+
+
+
+
+
+
+
+
 
 
 

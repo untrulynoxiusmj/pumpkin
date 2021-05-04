@@ -1,3 +1,136 @@
+<div class="centered-half">
+  
+  <div class="row">
+    
+    <h3 class="pink-text">Edit Item:</h3>
+      <form class="col s12" action="/hotel/item/{{item.id}}/edit" method="post">
+        
+        <div class="row">
+          <div class="input-field col s6">
+            <i class="material-icons prefix">face</i>
+            <input value="{{item.name}}" placeholder="Name" name="name" id="name" type="text" class="validate">
+            <label for="name">Name</label>
+          </div>
+          
+          <div class="input-field col s6">
+            <i class="material-icons prefix">shop</i>
+            <input value="{{item.cost}}" placeholder="Cost" name="cost" id="cost" type="number" class="validate">
+            <label for="cost">Cost</label>
+          </div>
+
+        </div>
+
+
+        <div class="row">
+            <div class="input-field col s12">
+              <select name="category" id="category" required>
+                  <option value="fast">Fast Food</option>
+                  <option value="indian">Indian Food</option>
+                  <option value="south">South Indian Food</option>
+                  <option value="punjabi">Punjabi Food</option>
+                  <option value="gujarati">Gujarati Food</option>
+                  <option value="other">Other</option>
+              </select>
+              <label>Category</label>
+            </div>
+        </div>
+
+
+        
+        <div class="row">
+          <div class="input-field col s12">
+            
+            <span>
+                Available:
+                <label>
+                    <input {{#if item.available}} checked {{/if}} type="radio" name="available" value=1 id="" checked>
+                    <span>Yes</span>
+                </label>
+                <label>
+                    <input {{#unless item.available}} checked {{/unless}} type="radio" name="available" value=0 id="">
+                    <span>No</span>
+                </label>
+            </span>
+          </div>
+        </div>
+
+        {{!-- <div class="file-field input-field">
+          <div class="btn">
+            <span>Image</span>
+            <input onchange=preview(this) type="file" id="image" name="image" accept="image/*">
+          </div>
+          <div class="file-path-wrapper">
+            <input class="file-path validate" type="text">
+          </div>
+        </div> --}}
+
+        <div class="row">
+          <span for="">Image: </span><br><br>
+          <img src="/item/{{item.image}}" alt="" id="pre">
+        </div>
+
+
+
+        
+
+        
+        <div class="row">
+          <div class="input-field col s12">
+            <i class="material-icons prefix">info</i>
+            <input value="{{item.details}}" placeholder="Details" name="details" id="details" type="text" class="validate">
+            <label for="details">Details</label>
+          </div>
+        </div>
+
+
+
+      <button class="btn waves-effect waves-light" type="submit" name="action">
+          Edit
+          <i class="material-icons right">edit</i>
+      </button>
+        
+      </form>
+  </div>
+</div>
+
+
+<script>
+    function selectElement(id, valueToSelect) {    
+      let element = document.getElementById(id);
+      element.value = valueToSelect;
+    }
+
+    selectElement("category", "{{item.category}}")
+
+      document.addEventListener('DOMContentLoaded', function() {
+    var elems = document.querySelectorAll('select');
+    var instances = M.FormSelect.init(elems);
+  });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{{!-- 
+
+
+
 <form action="/hotel/item/{{item.id}}/edit" method="post">
   <div class="container">
     <h1>Edit item</h1>
@@ -37,24 +170,4 @@
     <button type="submit" class="registerbtn">Edit</button>
   </div>
 </form>
-
-
-<script>
-    let preview = (e) => {
-        var file = document.querySelector("#image").files[0]
-        
-        var img = document.getElementById("pre");
-        var reader = new FileReader();
-        reader.onloadend = function() {
-             img.src = reader.result;
-        }
-        reader.readAsDataURL(file);
-    };
-
-    function selectElement(id, valueToSelect) {    
-      let element = document.getElementById(id);
-      element.value = valueToSelect;
-    }
-
-    selectElement("category", "{{item.category}}")
-</script>
+--}}

@@ -1,4 +1,189 @@
 {{#each objResult}}
+    <div class="container">
+        <div class="row">
+            <div class="col s12">
+                <div class="full card horizontal">
+                    {{!-- <div class="card-image"><img src="/hotel/{{data.h_image}}"></div> --}}
+                    <div class="little card-image waves-effect waves-block waves-light">
+                        <img class="activator" src="/customer/{{this.c_image}}">
+                    </div>
+                    <div class="card-stacked">
+                    <div class="card-content">
+                        <span class="card-title activator grey-text text-darken-4">
+                            <h5>{{this.c_name}} @ {{total_cost}} {{#if this.delivery_chosen}} + {{delivery_cost}} {{/if}}</h5>
+                            {{!-- <br> --}}
+                            {{!-- {{this.h_username}} --}}
+                            {{!-- <br> --}}
+                            {{this.c_phone}}
+                            <br>
+                            {{this.c_address}}
+                            {{!-- <br>
+                            {{this.bio}}
+                            <br> --}}
+                            <br>
+                            {{#if delivery_chosen}}
+                                Requires Delivery <br>
+                                {{#ifCond d_username null}}
+                                    No delivery boy assigned
+                                {{else}}
+                                    {{d_username}} is assigned
+                                {{/ifCond}}
+                            {{else}}
+                                    No Delivery Required
+                            {{/if}}
+
+                            <br>
+                            <label for="">{{timestamp}}</label>
+                            {{!-- <i class="material-icons right">more_vert</i> --}}
+                        </span>
+                    </div>
+
+                    <div class="card-action">
+                        <p>
+                            <button class="btn waves-effect waves-light" type="submit" name="action">
+                                {{payment_status}}
+                                {{!-- <i class="material-icons right">cancel</i> --}}
+                            </button>
+
+                            <button class="btn waves-effect waves-light" type="submit" name="action">
+                                {{order_status}}
+                                {{!-- <i class="material-icons right">cancel</i> --}}
+                            </button>
+
+
+
+                            {{#ifCond payment_status "PENDING"}}
+                                <form class="line" action="/hotel/order/{{id}}/payment/completed" method="post">  
+                                    <button class="btn waves-effect waves-light" type="submit" name="action">
+                                        Payment Complete
+                                        <i class="material-icons right">help_outline</i>
+                                    </button>
+                                    {{!-- <button type="submit" name="action" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></button> --}}
+                                </form> 
+                            {{/ifCond}}
+
+                            {{#ifCond order_status "PENDING"}}
+                                {{#if delivery_chosen}}
+                                    {{#if d_username}}
+                                        <form class="line" action="/hotel/order/{{id}}/status/completed" method="post">  
+                                            <button class="btn waves-effect waves-light" type="submit" name="action">
+                                                Order Complete
+                                                <i class="material-icons right">help_outline</i>
+                                            </button>
+                                            {{!-- <button type="submit" name="action" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></button> --}}
+                                        </form> 
+                                    {{/if}}
+
+                                {{else}}
+                                    <form class="line" action="/hotel/order/{{id}}/status/completed" method="post">  
+                                        <button class="btn waves-effect waves-light" type="submit" name="action">
+                                            Order Complete
+                                            <i class="material-icons right">help_outline</i>
+                                        </button>
+                                        {{!-- <button type="submit" name="action" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></button> --}}
+                                    </form> 
+                                {{/if}}
+                            {{/ifCond}}
+                                {{!-- <form action="" method="post">
+                                <span class="qt"><input type="submit" value="Accept"></span>
+                            </form>
+                                <form action="" method="post">
+                                <span class="qt"><input type="submit" value="Payment Complete"></span>
+                            </form>
+                                <form action="" method="post">
+                                <span class="qt"><input type="submit" value="Order Complete"></span>
+                            </form> --}}
+                        </p>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="centered flex">
+           
+        {{#each ioi}}
+            <div class="card sticky-action">
+
+                <div class="card-image waves-effect waves-block waves-light">
+                    <img class="activator" src="/item/{{this.image}}">
+                </div>
+                <div class="card-content">
+                    <span class="card-title activator grey-text text-darken-4">
+                        {{this.name}}
+                        <br>
+                        Quantity : {{this.i_quantity}}
+                        <br>
+                        Total Cost : {{this.t_cost}} 
+                        <i class="material-icons right">more_vert</i>
+                    </span>
+                </div>
+
+                <div class="card-reveal">
+                    <span class="card-title grey-text text-darken-4">{{this.name}} ({{this.category}})
+                        <i class="material-icons right">close</i>
+                    </span>
+                    <p>{{this.details}}</p>
+                </div>
+            </div>
+        {{/each}}
+    </div>
+{{/each}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--Section: Block Content-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{{#each objResult}}
     <div class="border">
         <header id="site-header head">
             <div class="container head">

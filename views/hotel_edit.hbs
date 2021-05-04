@@ -1,4 +1,151 @@
-<form form action="/{{role}}/edit" method="post">
+<div class="centered-half">
+  
+  <div class="row">
+    
+    <h3 class="pink-text">Edit {{role}}</h3>
+      <form class="col s12" action="/{{role}}/edit" method="post">
+        <div class="row">
+          <div class="input-field col s6">
+            <i class="material-icons prefix">account_circle</i>
+            <input disabled value="{{user.username}}" placeholder="Username" name="username" id="username" type="text" class="validate">
+            <label for="username">Username</label>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="input-field col s12">
+            <i class="material-icons prefix">face</i>
+            <input value="{{user.name}}" placeholder="Name" name="name" id="name" type="text" class="validate">
+            <label for="name">Name</label>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="input-field col s6">
+            <i class="material-icons prefix">home</i>
+            <input value="{{user.address}}" placeholder="Address" name="address" id="address" type="text" class="validate">
+            <label for="address">Address</label>
+          </div>
+
+          <div class="input-field col s6">
+            <i class="material-icons prefix">phone</i>
+            <input value="{{user.phone}}" placeholder="phone" name="phone" id="phone" type="text" class="validate">
+            <label for="phone">Phone</label>
+          </div>
+        </div>
+
+        
+        {{#if hotel}}
+          <div class="row">
+            <div class="input-field col s12">
+              
+              <span>
+                  Delivery:
+                  <label>
+                      <input {{#if user.delivery}} checked {{/if}} type="radio" name="delivery" value=1 id="">
+                      <span>Yes</span>
+                  </label>
+                  <label>
+                      <input {{#unless user.delivery}} checked {{/unless}} type="radio" name="delivery" value=0 id="">
+                      <span>No</span>
+                  </label>
+              </span>
+            </div>
+          </div>
+
+
+          <div class="row">
+            <div class="input-field col s12">
+              
+              <span>
+                  Open:
+                  <label>
+                      <input {{#if user.open}} checked {{/if}} type="radio" name="open" value=1 id="">
+                      <span>Yes</span>
+                  </label>
+                  <label>
+                      <input {{#unless user.open}} checked {{/unless}} type="radio" name="open" value=0 id="">
+                      <span>No</span>
+                  </label>
+              </span>
+            </div>
+          </div>
+      {{/if}}
+
+
+        <div class="row">
+          <span for="">Image: </span><br><br>
+          <img src="/hotel/{{user.image}}" alt="" id="pre">
+        </div>
+
+
+        <div class="row">
+          <div class="input-field col s12">
+            <i class="material-icons prefix">info</i>
+            <input value="{{user.delivery_cost}}" name="delivery_cost" id="delivery_cost" type="number" class="validate">
+            <label for="delivery_cost">Delivery cost</label>
+          </div>
+        </div>
+
+
+        <div class="row">
+          <div class="input-field col s12">
+            <i class="material-icons prefix">info</i>
+            <input value="{{user.bio}}" placeholder="Bio" name="bio" id="bio" type="text" class="validate">
+            <label for="bio">Bio</label>
+          </div>
+        </div>
+
+      <button class="btn waves-effect waves-light" type="submit" name="action">
+          Edit
+          <i class="material-icons right">edit</i>
+      </button>
+        
+      </form>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{{!-- 
+
+<form action="/{{role}}/edit" method="post">
   <div class="container">
     <h1>Edit {{role}} profile:</h1>
     <p>Please fill in this form to edit your profile</p>
@@ -47,16 +194,4 @@
   </div>
 </form>
 
-
-<script>
-    let preview = (e) => {
-        var file = document.querySelector("#image").files[0]
-        
-        var img = document.getElementById("pre");
-        var reader = new FileReader();
-        reader.onloadend = function() {
-             img.src = reader.result;
-        }
-        reader.readAsDataURL(file);
-};
-</script>
+--}}

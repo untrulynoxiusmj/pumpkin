@@ -1033,8 +1033,12 @@ img {
   vertical-align: middle
 }
 
-button {
+button, .btn {
   background-color: #ee6e73 !important;
+}
+
+.pink-text {
+  color:  #ee6e73 !important;
 }
 
 .full {
@@ -1042,11 +1046,10 @@ button {
 }
 
 .little {
-  width: 30%;
-}
-
-input[type=number] {
-  width: 30%;
+  width: 20% !important;
+  margin-left: 1em !important;
+  margin-right: 1em !important;
+  font-size: 1.2em !important;
 }
 
 #site-footer, .fr, .fl {
@@ -1055,4 +1058,31 @@ input[type=number] {
 
 .brand-logo {
   margin-left: 1em;
+}
+
+
+.line {
+  display: inline;
+}
+
+.centered-half {
+  width: 50%;
+  margin: auto;
+}
+
+#pre {
+  width: 25%;
+}
+
+
+label {
+  color: black !important;
+}
+
+.non-primary {
+  background-color: #26a69a !important;
+}
+
+.moved {
+  margin-right: 1em;
 }

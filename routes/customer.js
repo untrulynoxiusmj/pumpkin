@@ -149,6 +149,7 @@ router.get('/cart', ensureCustomer, (req, res) => {
                         h_image: element.h_image,
                         h_delivery: element.h_delivery,
                         open: element.open,
+                        h_delivery_cost : element.h_delivery_cost
                     },
                     total_h_cost : element.total_i_cost,
                     h_delivery_cost : element.h_delivery_cost,
@@ -348,7 +349,7 @@ router.post('/order', ensureCustomer, (req, res) => {
 
     
     let deleteQuery = `DELETE from cart where c_username = '${req.customer.username}';`
-    let query = `INSERT INTO order_icht (c_username, h_username, delivery_chosen, delivery_cost, address) select distinct ca.c_username, i.h_username , cd.delivery_chosen, h.delivery_cost, "${req.body.address}" from cart ca, item i, cart_deliver cd, hotel h where ca.c_username="${req.customer.username}" and ca.i_id=i.id AND cd.c_username=ca.c_username AND i.h_username=cd.h_username AND i.h_username=h.username order by i.h_username;`
+    let query = `INSERT INTO order_icht (c_username, h_username, delivery_chosen, delivery_cost, address) select distinct ca.c_username, i.h_username , (cd.delivery_chosen AND h.delivery) as delivery_chosen , h.delivery_cost, "${req.body.address}" from cart ca, item i, cart_deliver cd, hotel h where ca.c_username="${req.customer.username}" and ca.i_id=i.id AND cd.c_username=ca.c_username AND i.h_username=cd.h_username AND i.h_username=h.username AND i.available=1 AND h.open=1  order by i.h_username;`
     let Anotherquery = `INSERT INTO order_ioi (o_id, i_id, i_quantity, cost) select o.id as oid, ca.i_id, ca.i_quantity, (ca.i_quantity*i.cost) as cost from order_icht o, cart ca, item i where ca.c_username='${req.customer.username}' AND ca.c_username=o.c_username AND (not o.moved) AND ca.i_id=i.id AND ca.i_id in (select id from item where h_username=o.h_username) order by oid;`
     let updateQuery = `UPDATE order_icht SET moved=1 where c_username = '${req.customer.username}'`
     db.query(query, function (error, results, fields) {

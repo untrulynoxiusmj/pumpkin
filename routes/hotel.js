@@ -32,7 +32,7 @@ router.post('/signup', multer({ dest: 'uploads/hotel/' }).single('image'), funct
                 res.send(err)
                 return;
             }
-            let query = `INSERT INTO hotel ( username, password, name, address, phone, image, bio, delivery, open ) VALUES ( '${hotel.username}', '${hash}', '${hotel.name}', '${hotel.address}', '${hotel.phone}', '${req.file.filename}', "${hotel.bio}", '${hotel.delivery}', '${hotel.open}' )`;
+            let query = `INSERT INTO hotel ( username, password, name, address, phone, image, bio, delivery, open, delivery_cost ) VALUES ( '${hotel.username}', '${hash}', '${hotel.name}', '${hotel.address}', '${hotel.phone}', '${req.file.filename}', "${hotel.bio}", '${hotel.delivery}', '${hotel.open}', '${hotel.delivery_cost}' )`;
             db.query(query, function (error, results, fields) {
                 if (error) {
                     console.log(error);
@@ -126,53 +126,61 @@ router.get('/', function(req, res, next) {
 
 router.get('/details/:h_username', (req, res) => {
     let query = `SELECT * FROM item i WHERE h_username='${req.params.h_username}'`;
+    let Anotherquery = `SELECT * FROM hotel WHERE username='${req.params.h_username}'`;
     db.query(query, function (error, results, fields) {
         if (error) {
             console.log(error);
             res.send(error)
             return;
         }
-        const token = req.cookies.token;
-        if (!token) return res.render('item', { hotel:req.params.h_username, results: results})
-        try {
-            jwt.verify(token, process.env.JWT_SECRET, function(err, decoded) {
-                if (err) {
-                    console.log(err);
-                    res.render('item', { hotel:req.params.h_username, results: results})
-                    return;
-                }
-                console.log(decoded) // bar
-                if (decoded.role=='customer'){
-                            res.render('item', {customer:1, role:"customer", hotel:req.params.h_username, results: results})
-                            return;
-                }
-                if (decoded.username==req.params.h_username && decoded.role=='hotel'){
-                    res.render('item', {"role":"hotel", authorized:1, hotel:req.params.h_username, results: results})
-                    return
-                }
-                res.render('item', { hotel:req.params.h_username, results: results})
-                // let query = `SELECT * FROM customer WHERE username='${decoded.username}' LIMIT 1`;
-                // db.query(query, function (error, results, fields) {
-                //     if (error) {
-                //         console.log(error);
-                //         res.redirect("/customer/login")
-                //         return;
-                //     }
-                //     if (results.length==0){
-                //         res.redirect("/customer/login")
-                //         return;
-                //     }
-                //     if (decoded.role!=='customer'){
-                //         res.redirect("/customer/login")
-                //         return;
-                //     }
-                //     req.customer = results[0];
-                //     next() 
-                // });
-            })
-        } catch(err) {
-            res.redirect("/customer/login")
-        }
+        db.query(Anotherquery, function (error, anotherResult, fields) {
+            if (error) {
+                console.log(error);
+                res.send(error)
+                return;
+            }
+            const token = req.cookies.token;
+            if (!token) return res.render('item', { hotel:anotherResult[0], results: results})
+            try {
+                jwt.verify(token, process.env.JWT_SECRET, function(err, decoded) {
+                    if (err) {
+                        console.log(err);
+                        res.render('item', { hotel:anotherResult[0], results: results})
+                        return;
+                    }
+                    console.log(decoded) // bar
+                    if (decoded.role=='customer'){
+                                res.render('item', {customer:1, role:"customer", hotel:anotherResult[0], results: results})
+                                return;
+                    }
+                    if (decoded.username==req.params.h_username && decoded.role=='hotel'){
+                        res.render('item', {"role":"hotel", authorized:1, hotel:anotherResult[0], results: results})
+                        return
+                    }
+                    res.render('item', { hotel:anotherResult[0], results: results})
+                    // let query = `SELECT * FROM customer WHERE username='${decoded.username}' LIMIT 1`;
+                    // db.query(query, function (error, results, fields) {
+                    //     if (error) {
+                    //         console.log(error);
+                    //         res.redirect("/customer/login")
+                    //         return;
+                    //     }
+                    //     if (results.length==0){
+                    //         res.redirect("/customer/login")
+                    //         return;
+                    //     }
+                    //     if (decoded.role!=='customer'){
+                    //         res.redirect("/customer/login")
+                    //         return;
+                    //     }
+                    //     req.customer = results[0];
+                    //     next() 
+                    // });
+                })
+            } catch(err) {
+                res.redirect("/customer/login")
+            }
+        })
     });
 })
 
