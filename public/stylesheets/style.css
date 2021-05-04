@@ -206,7 +206,7 @@ table tr:nth-child(2n+1) {
 
 
 
-
+/* 
 body * {
   box-sizing: border-box;
 }
@@ -230,18 +230,13 @@ float: right;
 
 .container {
 width: 100%;
-/* max-width: 960px; */
-/* margin: 100px auto; */
 }
 
 img {
 width: 100%;
 height: 60%; 
 object-fit: cover;
-/* display: block; */
 }
-
-/*Card Styling*/
 
 .card {
 border: 1px solid #918181;
@@ -266,7 +261,6 @@ background-color: white;
   border-top: 1px solid #353030;
 }
 
-/*Card Flex Code*/
 
 .card {
 display: flex;
@@ -327,7 +321,6 @@ input {
 a {
   text-decoration: none;
   color: black;
-  /* display: block; */
 }
 
 .material-icons.green { color: #04AA6D; }
@@ -338,7 +331,7 @@ a {
 .material-icons-outlined.green { color: #04AA6D; }
 .material-icons-outlined.red   { color: #75261c; }
 .material-icons-outlined.md-18 { font-size: 18px; }
-.material-icons-outlined.md-36 { font-size: 36px; }
+.material-icons-outlined.md-36 { font-size: 36px; } */
 
 
 /* .container {
@@ -385,7 +378,7 @@ a {
 
 
 
-
+/* 
   .container {
     padding: 16px;
     background-color: white;
@@ -400,7 +393,6 @@ a {
     margin-bottom: 1em;
   }
   
-  /* Full-width input fields */
   input[type=text], input[type=password], select, input[type=file], .below {
     width: 100%;
     padding: 15px;
@@ -415,7 +407,6 @@ a {
   width: 100%;
   height: 100%;
   padding: 4px;
-  /* margin: 5px 0 22px 0; */
   display: inline-block;
   border: none;
   background: #f1f1f1;
@@ -441,13 +432,11 @@ a {
     border: 1px solid rgb(158, 84, 84);
   }
 
-  /* Overwrite default styles of hr */
   hr {
     border: 1px solid #f1f1f1;
     margin-bottom: 25px;
   }
   
-  /* Set a style for the submit button */
   .registerbtn {
     background-color: #04AA6D;
     color: white;
@@ -463,16 +452,13 @@ a {
     opacity: 1;
   }
   
-  /* Add a blue text color to links */
   a {
     color: dodgerblue;
   }
-  
-  /* Set a grey background color and center the text of the "sign in" section */
   .signin {
     background-color: #f1f1f1;
     text-align: center;
-  }
+  } */
 
 
 
@@ -499,18 +485,8 @@ a {
 
 
 
-
-
-
-
-
-
-
-
-
-
+/* 
   body {
-    /* background: #eee; */
     margin: 0;
     padding: 0;
     overflow-x: hidden;
@@ -583,7 +559,6 @@ a {
   .container {
     font-family: 'Open Sans', sans-serif;
     margin: 0 auto;
-    /* margin-left: 25%; */
     width: 55%;
   }
   
@@ -862,9 +837,6 @@ a {
     right: -40px;
   }
   
-  /* .red {
-    background: #cb5a5e;
-  } */
   
   .yellow {
     background: #f1c40f;
@@ -883,14 +855,7 @@ a {
   }
 
 
-  /* .head, header{
-    background-color: rgb(226, 241, 237) !important;
-  } */
-
   .border {
-    /* background: #4291881a; */
-    /* border: 1px solid #429188; */
-    /* margin: 4em; */
     padding: 2em;
     border-radius: 1em;
   }
@@ -912,8 +877,6 @@ a {
   
 
   .shift {
-    /* padding-left: 5em; */
-    /* background-color: blueviolet; */
     margin-left: 30%;
     border: 1px solid #356b6596;
   }
@@ -1006,4 +969,90 @@ body{
   top: 0;
   width: 100%;
 }
+ */
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+a {
+  text-decoration: none;
+  color: black;
+}
+
+.centered {
+  width: 70%;
+  margin: auto;
+}
+
+.danger {
+  color: brown;
+}
+
+.safe {
+  color: rgb(19, 107, 78);
+}
+
+.inactive {
+  color: rgb(161, 168, 187) !important;
+}
+
+.card {
+  width: 25%;
+  margin: 3%;
+}
+
+.card-image {
+  object-fit: contain;
+  vertical-align: middle;
+  height: 30vh;
+}
+
+.flex {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+img {
+  width:100%;
+  height: 100%; 
+  object-fit: contain;
+  vertical-align: middle
+}
+
+button {
+  background-color: #ee6e73 !important;
+}
+
+.full {
+  width: 100% !important;
+}
+
+.little {
+  width: 30%;
+}
+
+input[type=number] {
+  width: 30%;
+}
+
+#site-footer, .fr, .fl {
+  margin-bottom: 5em;
+}
+
+.brand-logo {
+  margin-left: 1em;
+}

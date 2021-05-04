@@ -1,123 +1,112 @@
 {{#each objResult}}
-    <div class="border">
-        <header id="site-header head">
-            <div class="container head">
-                            <div class="content">
-                                <h1>{{id}}{{timestamp}}</h1>
-                            </div>
-            </div>
-        </header>    
-                    <div class="container head">
-                        <section id="cart">     
-                                <article class="product">
-                                    <header>
-                                        <a class="remove">
-                                            <img src="/hotel/{{this.h_image}}" alt="">
-                                            <h3>Remove product</h3>
-                                        </a>
-                                    </header>
-                                    <div class="content">
-                                        <h1 class="danger-text" >{{this.h_name}}</h1>
-                                        {{this.h_username}}
-                                        {{this.h_phone}}
-                                        {{this.h_address}}
-
-
-
-                                        {{#if delivery_chosen}}
-                                            Requires Delivery
-                                            {{#ifCond d_username null}}
-                                                no delivery boy assigned
-                                            {{else}}
-                                                {{d_username}} is assigned
-                                            {{/ifCond}}
-                                        {{else}}
-                                                No Delivery Required
-                                        {{/if}}
-                                    </div>
-                                    <footer class="content">
-                                        <form action="" method="post">
-                                            <span class="qt"><input type="submit" value="Cancel"></span>
-                                        </form>
-                                         <form action="" method="post">
-                                            <span class="qt"><input type="submit" value="Accept"></span>
-                                        </form>
-                                         <form action="" method="post">
-                                            <span class="qt"><input type="submit" value="Payment Complete"></span>
-                                        </form>
-                                         <form action="" method="post">
-                                            <span class="qt"><input type="submit" value="Order Complete"></span>
-                                        </form>
-
-
-                                        {{!-- <span class="material-icons-outlined qt green md-18">
-                                            shopping_bag
-                                        </span>
-                                        <span class="qt"><input disabled min="1" type="number" name=quantity value={{this.i_quantity}} id=""></span> --}}
-
-                                        <h2 class="full-price danger-block">
-                                             {{total_cost}}
-                                        </h2>
-                                        <h2 class="full-price">
-                                            {{delivery_cost}}
-                                        </h2>
-                                    </footer>
-                                </article>
-                        </section>
+    <div class="container">
+        <div class="row">
+            <div class="col s12">
+                <div class="full card horizontal">
+                    {{!-- <div class="card-image"><img src="/hotel/{{data.h_image}}"></div> --}}
+                    <div class="little card-image waves-effect waves-block waves-light">
+                        <img class="activator" src="/hotel/{{this.h_image}}">
                     </div>
-                {{!-- </header> --}}
+                    <div class="card-stacked">
+                    <div class="card-content">
+                        <span class="card-title activator grey-text text-darken-4">
+                            <h5>{{this.h_name}} @ {{total_cost}} {{#if this.delivery_chosen}} + {{delivery_cost}} {{/if}}</h5>
+                            {{!-- <br> --}}
+                            {{!-- {{this.h_username}} --}}
+                            {{!-- <br> --}}
+                            {{this.h_phone}}
+                            <br>
+                            {{this.h_address}}
+                            {{!-- <br>
+                            {{this.bio}}
+                            <br> --}}
+                            <br>
+                            {{#if delivery_chosen}}
+                                Requires Delivery <br>
+                                {{#ifCond d_username null}}
+                                    No delivery boy assigned
+                                {{else}}
+                                    {{d_username}} is assigned
+                                {{/ifCond}}
+                            {{else}}
+                                    No Delivery Required
+                            {{/if}}
 
-                                    <div class="container shift">
+                            <br>
+                            <label for="">{{timestamp}}</label>
+                            {{!-- <i class="material-icons right">more_vert</i> --}}
+                        </span>
+                    </div>
 
-                                        {{#each ioi}}
+                    <div class="card-action">
+                        <p>
+                            <button class="btn waves-effect waves-light" type="submit" name="action">
+                                {{payment_status}}
+                                {{!-- <i class="material-icons right">cancel</i> --}}
+                            </button>
 
-                                            <section id="cart"> 
-                                                    <article class="product">
-                                                        <header>
-                                                                <a class="remove">
-                                                                    <img src="/item/{{this.image}}" alt="">
-                                                                    <h3>Cancel order</h3>
-                                                                </a>
-                                                        </header>
+                            <button class="btn waves-effect waves-light" type="submit" name="action">
+                                {{order_status}}
+                                {{!-- <i class="material-icons right">cancel</i> --}}
+                            </button>
 
-                                                        <div class="content">
 
-                                                            <h1>{{this.name}}  {{this.available}}</h1>
-                                                            {{this.details}}
-                                                        </div>
+                            {{#ifCond order_status "PENDING"}}
+                                <form  action="/customer/order/{{id}}/cancel" method="post">  
+                                    <button class="btn waves-effect waves-light" type="submit" name="action">
+                                        Cancel
+                                        <i class="material-icons right">cancel</i>
+                                    </button>
+                                    {{!-- <button type="submit" name="action" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></button> --}}
+                                </form> 
+                            {{/ifCond}}
+                                {{!-- <form action="" method="post">
+                                <span class="qt"><input type="submit" value="Accept"></span>
+                            </form>
+                                <form action="" method="post">
+                                <span class="qt"><input type="submit" value="Payment Complete"></span>
+                            </form>
+                                <form action="" method="post">
+                                <span class="qt"><input type="submit" value="Order Complete"></span>
+                            </form> --}}
+                        </p>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                                                        <footer class="content">
-                                                                    <span class="material-icons-outlined qt green md-18">
-                                                                        shopping_bag
-                                                                    </span>
-                                                                    <span class="qt"><input disabled min="1" type="number" name=quantity value={{this.i_quantity}} id=""></span>
-                                                                    
-                                                            <h2 class="full-price">
-                                                                {{this.t_cost}} 
-                                                            </h2>
 
-                                                            <h2 class="price  danger-text">
-                                                            </h2>
-                                                        </footer>
-                                                    </article>
-                                            </section>
+    <div class="centered flex">
+           
+        {{#each ioi}}
+            <div class="card sticky-action">
 
-                                        {{/each}}
+                <div class="card-image waves-effect waves-block waves-light">
+                    <img class="activator" src="/item/{{this.image}}">
+                </div>
+                <div class="card-content">
+                    <span class="card-title activator grey-text text-darken-4">
+                        {{this.name}}
+                        <br>
+                        Quantity : {{this.i_quantity}}
+                        <br>
+                        Total Cost : {{this.t_cost}} 
+                        <i class="material-icons right">more_vert</i>
+                    </span>
+                </div>
 
-                                    </div>
-
+                <div class="card-reveal">
+                    <span class="card-title grey-text text-darken-4">{{this.name}} ({{this.category}})
+                        <i class="material-icons right">close</i>
+                    </span>
+                    <p>{{this.details}}</p>
+                </div>
+            </div>
+        {{/each}}
     </div>
 {{/each}}
-
-
-
-
-
-
-
-
-
-
 
 
 

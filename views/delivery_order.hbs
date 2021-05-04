@@ -1,94 +1,98 @@
 {{#each objResult}}
     <div class="border">
-        <header id="site-header layer-1">
-            <div class="container layer-1">
-                {{!-- <section id="cart">      --}}
-                        {{!-- <article class="product"> --}}
+        <header id="site-header head">
+            <div class="container head">
                             <div class="content">
-                                <h1 >{{@key}}</h1>
+                                <h1>{{id}}{{timestamp}}</h1>
                             </div>
-                        {{!-- </article> --}}
-                {{!-- </section> --}}
             </div>
-        </header>     {{!-- timestamp --}}
-        {{#each this}}
-            {{!-- <h2>{{@key}}</h2>  --}}
-                 {{!-- <header id="site-header head"> --}}
-                    <div class="container layer-2">
+        </header>    
+                    <div class="container head">
                         <section id="cart">     
                                 <article class="product">
                                     <header>
                                         <a class="remove">
-                                            <img src="/hotel/{{this.data.h_image}}" alt="">
+                                            <img src="/hotel/{{this.h_image}}" alt="">
                                             <h3>Remove product</h3>
                                         </a>
                                     </header>
                                     <div class="content">
-                                        <h1 class="danger-text" >{{this.data.h_name}}</h1>
-                                        {{this.data.h_username}}
-                                        {{this.data.h_phone}}
-                                        {{this.data.h_address}}
+                                        <h1 class="danger-text" >{{this.h_name}}</h1>
+                                        {{this.h_username}}
+                                        {{this.h_phone}}
+                                        {{this.h_address}}
+                                        {{this.payment_status}}
+                                        {{this.order_status}}
+
+
+
+                                        {{#if delivery_chosen}}
+                                            Requires Delivery
+                                            {{#ifCond d_username null}}
+                                                no delivery boy assigned
+                                            {{else}}
+                                                {{d_username}} is assigned
+                                            {{/ifCond}}
+                                        {{else}}
+                                                No Delivery Required
+                                        {{/if}}
                                     </div>
                                     <footer class="content">
-                                        <h2 class="full-price danger-block">
-                                            {{this.data.h_delivery_cost}}
-                                        </h2>
+                                        {{!-- <form action="" method="post">
+                                            <span class="qt"><input type="submit" value="Cancel"></span>
+                                        </form> --}}
+                                        {{#ifCond d_username null}}
+                                            <form action="/delivery/order/{{id}}/accept" method="post">
+                                                <span class="qt"><input type="submit" value="Accept"></span>
+                                            </form>
+                                        {{else}}
+                                            {{#ifCond payment_status "PENDING"}}
+                                                <form action="/delivery/order/{{id}}/payment/completed" method="post">
+                                                    <span class="qt"><input type="submit" value="Payment Complete"></span>
+                                                </form>
+                                            {{/ifCond}}
+                                            {{#ifCond order_status "PENDING"}}
+                                                <form action="/delivery/order/{{id}}/status/completed" method="post">
+                                                    <span class="qt"><input type="submit" value="Order Complete"></span>
+                                                </form>
+                                            {{/ifCond}}
+                                        {{/ifCond}}
 
-                                        <form action="/delivery/order/accept/{{@key}}/{{@../key}}" method="post">
-                                        <button type="submit">Accept</button>
-                                        </form>
-                                        
+
+                                        {{!-- <span class="material-icons-outlined qt green md-18">
+                                            shopping_bag
+                                        </span>
+                                        <span class="qt"><input disabled min="1" type="number" name=quantity value={{this.i_quantity}} id=""></span> --}}
+
+                                        <h2 class="full-price danger-block">
+                                             {{total_cost}}
+                                        </h2>
+                                        <h2 class="full-price">
+                                            {{delivery_cost}}
+                                        </h2>
                                     </footer>
                                 </article>
                         </section>
                     </div>
                 {{!-- </header> --}}
 
-                
-                
+                                    <div class="container shift">
 
-                {{#each this.order_info}}
-
-                    {{!-- {{@key}} --}}
-                    {{!-- {{#ifCond @key "1"}}
-                        <div class="container layer-3">
-                                        <div class="content">
-                                            <h1 >Requires Delivery</h1>
-                                        </div>
-                        </div>
-                    {{else}}
-                    <div class="container layer-3">
-                                        <div class="content">
-                                            <h1 >No Delivery Required</h1>
-                                        </div>
-                        </div>
-                    {{/ifCond}} --}}
-
-                        
-                    <div class="container layer-3">
-                                    <div class="content">
-                                        <h1>{{@key}}</h1>
-                                    </div>
-                                    
-                    </div>
-
-                                <div class="container layer-4">
-
-                                        {{#each orders}}
+                                        {{#each ioi}}
 
                                             <section id="cart"> 
                                                     <article class="product">
                                                         <header>
                                                                 <a class="remove">
-                                                                    <img src="/item/{{this.i_image}}" alt="">
+                                                                    <img src="/item/{{this.image}}" alt="">
                                                                     <h3>Cancel order</h3>
                                                                 </a>
                                                         </header>
 
                                                         <div class="content">
 
-                                                            <h1>{{this.i_name}}  {{this.available}}</h1>
-                                                            {{this.i_details}}
+                                                            <h1>{{this.name}}  {{this.available}}</h1>
+                                                            {{this.details}}
                                                         </div>
 
                                                         <footer class="content">
@@ -97,20 +101,11 @@
                                                                     </span>
                                                                     <span class="qt"><input disabled min="1" type="number" name=quantity value={{this.i_quantity}} id=""></span>
                                                                     
-                                                                    
-                                                                    <form action="/delivery/order/{{this.id}}/payment/completed" method="post">
-                                                                        <span class="qt"><button type="submit">payment complete?</button></span>
-                                                                    </form>
-                                                                    <form action="/delivery/order/{{this.id}}/status/completed" method="post">
-                                                                        <span class="qt"><button type="submit">order complete?</button></span>
-                                                                    </form>
-    
                                                             <h2 class="full-price">
-                                                                {{this.total_i_cost}} {{this.order_status}}
+                                                                {{this.t_cost}} 
                                                             </h2>
 
-                                                            <h2 class="price">
-                                                                {{this.cost}} {{this.payment_status}}
+                                                            <h2 class="price  danger-text">
                                                             </h2>
                                                         </footer>
                                                     </article>
@@ -119,8 +114,40 @@
                                         {{/each}}
 
                                     </div>
-                        
-                    {{/each}}
-        {{/each}}
+
     </div>
 {{/each}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--Section: Block Content-->

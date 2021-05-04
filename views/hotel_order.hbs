@@ -1,99 +1,105 @@
 {{#each objResult}}
     <div class="border">
-        <header id="site-header layer-1">
-            <div class="container layer-1">
-                {{!-- <section id="cart">      --}}
-                        {{!-- <article class="product"> --}}
+        <header id="site-header head">
+            <div class="container head">
                             <div class="content">
-                                <h1>{{@key}}</h1>
+                                <h1>{{id}}{{timestamp}}</h1>
                             </div>
-                        {{!-- </article> --}}
-                {{!-- </section> --}}
             </div>
-        </header>     {{!-- timestamp --}}
-        {{#each this}}
-            {{!-- <h2>{{@key}}</h2>  --}}
-                 {{!-- <header id="site-header head"> --}}
-                    <div class="container layer-2">
+        </header>    
+                    <div class="container head">
                         <section id="cart">     
                                 <article class="product">
                                     <header>
                                         <a class="remove">
-                                            <img src="/customer/{{this.data.c_image}}" alt="">
+                                            <img src="/customer/{{this.c_image}}" alt="">
                                             <h3>Remove product</h3>
                                         </a>
                                     </header>
                                     <div class="content">
-                                        <h1 class="danger-text" >{{this.data.c_name}}</h1>
-                                        {{this.data.c_username}}
-                                        {{this.data.c_phone}}
-                                        {{this.data.c_address}}
+                                        <h1 class="danger-text" >{{this.c_name}}</h1>
+                                        {{this.c_username}}
+                                        {{this.c_phone}}
+                                        {{this.c_address}}
+                                        {{this.payment_status}}
+                                        {{this.order_status}}
+
+
+
+                                        {{#if delivery_chosen}}
+                                            Requires Delivery
+                                            {{#ifCond d_username null}}
+                                                no delivery boy assigned
+                                            {{else}}
+                                                {{d_username}} is assigned
+                                            {{/ifCond}}
+                                        {{else}}
+                                                No Delivery Required
+                                        {{/if}}
                                     </div>
-                
+                                    <footer class="content">
+                                        {{!-- <form action="" method="post">
+                                            <span class="qt"><input type="submit" value="Cancel"></span>
+                                        </form>
+                                         <form action="/delivery/order/{{id}}/accept" method="post">
+                                            <span class="qt"><input type="submit" value="Accept"></span>
+                                        </form> --}}
+                                        {{#ifCond payment_status "PENDING"}}
+                                            <form action="/hotel/order/{{id}}/payment/completed" method="post">
+                                                <span class="qt"><input type="submit" value="Payment Complete"></span>
+                                            </form>
+                                        {{/ifCond}}
+
+                                        {{#ifCond order_status "PENDING"}}
+                                            {{#if delivery_chosen}}
+                                                {{#if d_username}}
+                                                    <form action="/hotel/order/{{id}}/status/completed" method="post">
+                                                        <span class="qt"><input type="submit" value="Order Complete"></span>
+                                                    </form>
+                                                {{/if}}
+
+                                            {{else}}
+                                                <form action="/hotel/order/{{id}}/status/completed" method="post">
+                                                        <span class="qt"><input type="submit" value="Order Complete"></span>
+                                                </form>
+                                            {{/if}}
+                                        {{/ifCond}}
+
+
+                                        {{!-- <span class="material-icons-outlined qt green md-18">
+                                            shopping_bag
+                                        </span>
+                                        <span class="qt"><input disabled min="1" type="number" name=quantity value={{this.i_quantity}} id=""></span> --}}
+
+                                        <h2 class="full-price danger-block">
+                                             {{total_cost}}
+                                        </h2>
+                                        <h2 class="full-price">
+                                            {{delivery_cost}}
+                                        </h2>
                                     </footer>
                                 </article>
                         </section>
                     </div>
                 {{!-- </header> --}}
 
-                
-                
+                                    <div class="container shift">
 
-                {{#each this.order_info}}
-
-                    {{!-- {{@key}} --}}
-                    {{#ifCond @key "1"}}
-                        <div class="container layer-3">
-                                        <div class="content">
-                                            <h1 >Requires Delivery {{../this.data.h_delivery_cost}}</h1>
-                                        </div>
-                        </div>
-                    {{else}}
-                    <div class="container layer-3">
-                                        <div class="content">
-                                            <h1 >No Delivery Required</h1>
-                                        </div>
-                        </div>
-                    {{/ifCond}}
-
-                    
-
-
-
-                            {{#each this}}
-                            
-                                {{#ifCond @../key "1"}}
-                                    {{#ifCond @key "null"}}
-                                            <div class="container layer-4">
-                                                            <div class="content">
-                                                                <h1 >No delivery boy assigned</h1>
-                                                            </div>
-                                            </div>
-                                    {{else}}
-                                    <div class="container layer-4">
-                                                        <div class="content">
-                                                            <h1 >{{@key}} is assigned</h1>
-                                                        </div>
-                                        </div>
-                                    {{/ifCond}}
-                                {{/ifCond}}
-                                    <div class="container layer-5">
-
-                                        {{#each orders}}
+                                        {{#each ioi}}
 
                                             <section id="cart"> 
                                                     <article class="product">
                                                         <header>
                                                                 <a class="remove">
-                                                                    <img src="/item/{{this.i_image}}" alt="">
+                                                                    <img src="/item/{{this.image}}" alt="">
                                                                     <h3>Cancel order</h3>
                                                                 </a>
                                                         </header>
 
                                                         <div class="content">
 
-                                                            <h1>{{this.i_name}}  {{this.available}}</h1>
-                                                            {{this.i_details}}
+                                                            <h1>{{this.name}}  {{this.available}}</h1>
+                                                            {{this.details}}
                                                         </div>
 
                                                         <footer class="content">
@@ -102,15 +108,11 @@
                                                                     </span>
                                                                     <span class="qt"><input disabled min="1" type="number" name=quantity value={{this.i_quantity}} id=""></span>
                                                                     
-                                                                    <form action="/customer/order/{{this.id}}/cancel" method="post">
-                                                                        <span class="qt"><input type="submit" value="Cancel"></span>
-                                                                    </form>
                                                             <h2 class="full-price">
-                                                                {{this.total_i_cost}} {{this.payment_status}}
+                                                                {{this.t_cost}} 
                                                             </h2>
 
-                                                            <h2 class="price">
-                                                                {{this.cost}} {{this.order_status}}
+                                                            <h2 class="price  danger-text">
                                                             </h2>
                                                         </footer>
                                                     </article>
@@ -119,8 +121,40 @@
                                         {{/each}}
 
                                     </div>
-                            {{/each}}
-                    {{/each}}
-        {{/each}}
+
     </div>
 {{/each}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--Section: Block Content-->

@@ -96,8 +96,7 @@ router.get('/', ensureDelivery, function(req, res, next) {
   });
 
 router.get('/order/unassigned', ensureDelivery, function(req, res, next) {
-    console.log(req.delivery)
-    let query = `SELECT o.*, i.id as i_id, i.name as i_name, i.image as i_image, i.details as i_details, i.cost as i_cost, h.username as h_username, h.name as h_name, h.address as h_address, h.phone as h_phone, h.bio as h_bio, h.image as h_image, h.delivery as h_delivery, h.delivery_cost as h_delivery_cost FROM order_t o, item i, hotel h WHERE o.i_id = i.id AND i.h_username=h.username AND o.d_username IS NULL and delivery_chosen=1  AND o.order_status='PENDING';`
+        let query = `select oicht.*, h.username as h_username,  h.name as h_name,  h.address as h_address,  h.phone as h_phone,  h.bio as h_bio,  h.image as h_image,  h.delivery as h_delivery from order_icht oicht, hotel h where oicht.delivery_chosen=1 AND oicht.d_username is NULL AND oicht.order_status='PENDING' AND oicht.h_username=h.username ORDER BY oicht.timestamp DESC;`
     db.query(query, function (error, results, fields) {
         if (error) {
             console.log(error);
@@ -105,52 +104,43 @@ router.get('/order/unassigned', ensureDelivery, function(req, res, next) {
             return;
         }
         console.log(results)
-        let ObjResult = new Object();
-        results.forEach(element => {
-            if (!ObjResult[element.c_username]){
-                ObjResult[element.c_username] = new Object()
-                ObjResult[element.c_username][element.h_username] = new Object()
-                ObjResult[element.c_username][element.h_username]['data'] = element;
-                ObjResult[element.c_username][element.h_username]['order_info'] = new Object()
-                ObjResult[element.c_username][element.h_username]['order_info'][element.timestamp] = new Object(
-                    {
-                        delivery_provided: element.h_delivery ,
-                        delivery_chosen: element.delivery_chosen,
-                        orders: Array(element)
-                    })
-            }
-            else{
-                if (!ObjResult[element.c_username][element.h_username]){
-                    ObjResult[element.c_username][element.h_username] = new Object()
-                    ObjResult[element.c_username][element.h_username]['data'] = element;
-                    ObjResult[element.c_username][element.h_username]['order_info'] = new Object()
-                    ObjResult[element.c_username][element.h_username]['order_info'][element.timestamp] = new Object(
-                        {
-                            delivery_provided: element.h_delivery ,
-                            delivery_chosen: element.delivery_chosen,
-                            orders: Array(element)
-                        })
+        console.log(results.length)
+        if (results.length===0){
+            return res.render('delivery_order', { role: "delivery", delivery:req.delivery})
+        }
+        for (let i=0; i<results.length; i++){
+            // result[i]
+            // console.log("hello", results[i].id)
+            let Anotherquery=`select oioi.o_id as o_id, oioi.i_id as i_id, oioi.i_quantity as i_quantity, oioi.cost as t_cost, i.* from order_ioi oioi, item i where i.id=oioi.i_id and oioi.o_id='${results[i].id}' order by oioi.o_id;`
+            db.query(Anotherquery, function (error, anotherResults, fields) {
+                if (error) {
+                    console.log(error);
+                    // res.send(error)
+                    // return;
                 }
-                else{
-                    if (!ObjResult[element.c_username][element.h_username]['order_info'][element.timestamp]){
-                        ObjResult[element.c_username][element.h_username]['order_info'][element.timestamp] =  new Object(
-                            {
-                                delivery_provided: element.h_delivery ,
-                                delivery_chosen: element.delivery_chosen,
-                                orders: Array(element)
-                            })
-                    }
-                    else{
-                        ObjResult[element.c_username][element.h_username]['order_info'][element.timestamp]['orders'].push(element)
-                    }
+                // console.log(anotherResults)
+                let total_cost=0;
+                anotherResults.forEach(anotherResult => {
+                    total_cost+=anotherResult["t_cost"]
+                })
+                console.log(total_cost)
+                results[i].ioi = anotherResults;
+                results[i].total_cost = total_cost;
+                console.log(anotherResults)
+                
+                if (i===results.length-1){
+                    console.log(results)
+                    return res.render('delivery_order', { role: "delivery", objResult:results, delivery:req.delivery})
                 }
-            }
-        });
-        console.log(ObjResult)
+
+            })
+        }
+        console.log(results)
+        
+        // console.log(ObjResult)
         // res.send(ObjResult)
-        res.render('delivery_order', {role: "delivery", objResult:ObjResult, customer:req.customer})
+        // res.render('customer_order', { role: "customer", objResult:ObjResult, customer:req.customer})
     });
-    // res.render('index', { title: req.delivery.username });
 });
 
 
@@ -165,10 +155,7 @@ router.get('/order/unassigned', ensureDelivery, function(req, res, next) {
 // }
 
 router.get('/order/:status', ensureDelivery, function(req, res, next) {
-
-
-
-    let query = `SELECT o.*, i.id as i_id, i.name as i_name, i.image as i_image, i.details as i_details, i.cost as i_cost, h.username as h_username, h.name as h_name, h.address as h_address, h.phone as h_phone, h.bio as h_bio, h.image as h_image, h.delivery as h_delivery, h.delivery_cost as h_delivery_cost FROM order_t o, item i, hotel h WHERE o.i_id = i.id AND i.h_username=h.username AND o.d_username='${req.delivery.username}' AND o.order_status='${req.params.status}' ORDER BY o.timestamp DESC;`
+    let query = `select oicht.*, h.username as h_username,  h.name as h_name,  h.address as h_address,  h.phone as h_phone,  h.bio as h_bio,  h.image as h_image,  h.delivery as h_delivery from order_icht oicht, hotel h where oicht.delivery_chosen=1 AND oicht.d_username='${req.delivery.username}' AND oicht.order_status='${req.params.status}' AND oicht.h_username=h.username ORDER BY oicht.timestamp DESC;`
     db.query(query, function (error, results, fields) {
         if (error) {
             console.log(error);
@@ -176,56 +163,47 @@ router.get('/order/:status', ensureDelivery, function(req, res, next) {
             return;
         }
         console.log(results)
-        let ObjResult = new Object();
-        results.forEach(element => {
-            if (!ObjResult[element.c_username]){
-                ObjResult[element.c_username] = new Object()
-                ObjResult[element.c_username][element.h_username] = new Object()
-                ObjResult[element.c_username][element.h_username]['data'] = element;
-                ObjResult[element.c_username][element.h_username]['order_info'] = new Object()
-                ObjResult[element.c_username][element.h_username]['order_info'][element.timestamp] = new Object(
-                    {
-                        delivery_provided: element.h_delivery ,
-                        delivery_chosen: element.delivery_chosen,
-                        orders: Array(element)
-                    })
-            }
-            else{
-                if (!ObjResult[element.c_username][element.h_username]){
-                    ObjResult[element.c_username][element.h_username] = new Object()
-                    ObjResult[element.c_username][element.h_username]['data'] = element;
-                    ObjResult[element.c_username][element.h_username]['order_info'] = new Object()
-                    ObjResult[element.c_username][element.h_username]['order_info'][element.timestamp] = new Object(
-                        {
-                            delivery_provided: element.h_delivery ,
-                            delivery_chosen: element.delivery_chosen,
-                            orders: Array(element)
-                        })
+        console.log(results.length)
+        if (results.length===0){
+            return res.render('delivery_order', { role: "delivery", delivery:req.delivery})
+        }
+        for (let i=0; i<results.length; i++){
+            // result[i]
+            // console.log("hello", results[i].id)
+            let Anotherquery=`select oioi.o_id as o_id, oioi.i_id as i_id, oioi.i_quantity as i_quantity, oioi.cost as t_cost, i.* from order_ioi oioi, item i where i.id=oioi.i_id and oioi.o_id='${results[i].id}' order by oioi.o_id;`
+            db.query(Anotherquery, function (error, anotherResults, fields) {
+                if (error) {
+                    console.log(error);
+                    // res.send(error)
+                    // return;
                 }
-                else{
-                    if (!ObjResult[element.c_username][element.h_username]['order_info'][element.timestamp]){
-                        ObjResult[element.c_username][element.h_username]['order_info'][element.timestamp] =  new Object(
-                            {
-                                delivery_provided: element.h_delivery ,
-                                delivery_chosen: element.delivery_chosen,
-                                orders: Array(element)
-                            })
-                    }
-                    else{
-                        ObjResult[element.c_username][element.h_username]['order_info'][element.timestamp]['orders'].push(element)
-                    }
+                // console.log(anotherResults)
+                let total_cost=0;
+                anotherResults.forEach(anotherResult => {
+                    total_cost+=anotherResult["t_cost"]
+                })
+                console.log(total_cost)
+                results[i].ioi = anotherResults;
+                results[i].total_cost = total_cost;
+                console.log(anotherResults)
+                
+                if (i===results.length-1){
+                    console.log(results)
+                    return res.render('delivery_order', { role: "delivery", objResult:results, delivery:req.delivery})
                 }
-            }
-        });
-        console.log(ObjResult)
-        // res.send(ObjResult)
-        res.render('delivery_order', {role: "delivery", objResult:ObjResult, customer:req.customer})
-    });
 
+            })
+        }
+        console.log(results)
+        
+        // console.log(ObjResult)
+        // res.send(ObjResult)
+        // res.render('customer_order', { role: "customer", objResult:ObjResult, customer:req.customer})
+    });
 });
 
-router.post('/order/accept/:h_username/:c_username', ensureDelivery, (req, res) => {
-    let query = `UPDATE order_t SET d_username='${req.delivery.username}' WHERE order_status='PENDING' and delivery_chosen=1 AND d_username is NULL AND c_username='${req.params.c_username}' AND i_id in (SELECT id from item where h_username='${req.params.h_username}');`
+router.post('/order/:id/accept', ensureDelivery, (req, res) => {
+    let query = `UPDATE order_icht SET d_username='${req.delivery.username}' WHERE id='${req.params.id}' AND order_status='PENDING' and delivery_chosen=1 AND d_username is NULL;`
     db.query(query, function (error, results, fields) {
         if (error) {
             console.log(error);
@@ -238,7 +216,7 @@ router.post('/order/accept/:h_username/:c_username', ensureDelivery, (req, res) 
 })
 
 router.post('/order/:id/status/completed', ensureDelivery, (req, res) => {
-    let query = `UPDATE order_t SET payment_status='COMPLETED', order_status='COMPLETED' where id='${req.params.id}' AND delivery_chosen=1 AND d_username='${req.delivery.username}' AND order_status='PENDING';`
+    let query = `UPDATE order_icht SET payment_status='COMPLETED', order_status='COMPLETED' where id='${req.params.id}' AND delivery_chosen=1 AND d_username='${req.delivery.username}' AND order_status='PENDING';`
     db.query(query, function (error, results, fields) {
         if (error) {
             console.log(error);
@@ -252,7 +230,7 @@ router.post('/order/:id/status/completed', ensureDelivery, (req, res) => {
 })
 
 router.post('/order/:id/payment/completed', ensureDelivery, (req, res) => {
-    let query = `UPDATE order_t SET payment_status='COMPLETED' where id='${req.params.id}' AND delivery_chosen=1 AND d_username='${req.delivery.username}' AND payment_status='PENDING';`
+    let query = `UPDATE order_icht SET payment_status='COMPLETED' where id='${req.params.id}' AND delivery_chosen=1 AND d_username='${req.delivery.username}' AND payment_status='PENDING';`
     db.query(query, function (error, results, fields) {
         if (error) {
             console.log(error);

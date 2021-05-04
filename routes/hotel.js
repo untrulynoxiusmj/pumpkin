@@ -150,6 +150,7 @@ router.get('/details/:h_username', (req, res) => {
                     res.render('item', {"role":"hotel", authorized:1, hotel:req.params.h_username, results: results})
                     return
                 }
+                res.render('item', { hotel:req.params.h_username, results: results})
                 // let query = `SELECT * FROM customer WHERE username='${decoded.username}' LIMIT 1`;
                 // db.query(query, function (error, results, fields) {
                 //     if (error) {
@@ -230,7 +231,8 @@ router.post('/item/:id/edit', ensureHotel, function(req, res, next) {
 
 
 router.get('/order/:status', ensureHotel, (req, res) => {
-    let query = `SELECT o.*, i.id as i_id, i.name as i_name, i.image as i_image, i.details as i_details, i.cost as i_cost, h.username as h_username, h.name as h_name, h.address as h_address, h.phone as h_phone, h.bio as h_bio, h.image as h_image, h.delivery as h_delivery,  h.delivery_cost as h_delivery_cost, c.username as c_username, c.name as c_name, c.address as c_address, c.phone as c_phone, c.bio as c_bio, c.image as c_image FROM order_t o, customer c, item i, hotel h WHERE c.username=o.c_username AND o.i_id = i.id AND i.h_username='${req.hotel.username}' AND h.username ='${req.hotel.username}' AND o.order_status='${req.params.status}' ORDER BY o.timestamp DESC;`
+
+    let query = `select oicht.*, c.username as c_username,  c.name as c_name,  c.address as c_address,  c.phone as c_phone,  c.bio as c_bio,  c.image as c_image from order_icht oicht, customer c where oicht.h_username="${req.hotel.username}" and order_status="${req.params.status}" and oicht.c_username=c.username ORDER BY oicht.timestamp DESC;`
     db.query(query, function (error, results, fields) {
         if (error) {
             console.log(error);
@@ -238,69 +240,47 @@ router.get('/order/:status', ensureHotel, (req, res) => {
             return;
         }
         console.log(results)
-        let ObjResult = new Object();
-        results.forEach(element => {
-            if (!ObjResult[element.timestamp]){
-                ObjResult[element.timestamp] = new Object()
-                ObjResult[element.timestamp][element.c_username] = new Object()
-                ObjResult[element.timestamp][element.c_username]['data'] = element;
-                ObjResult[element.timestamp][element.c_username]['order_info'] = new Object()
-                ObjResult[element.timestamp][element.c_username]['order_info'][element.delivery_chosen] = new Object()
-                ObjResult[element.timestamp][element.c_username]['order_info'][element.delivery_chosen][element.d_username] = new Object(
-                    {
-                        delivery_provided: element.h_delivery ,
-                        delivery_chosen: element.delivery_chosen,
-                        orders: Array(element)
-                    })
-            }
-            else{
-                if (!ObjResult[element.timestamp][element.c_username]){
-                    ObjResult[element.timestamp][element.c_username] = new Object()
-                    ObjResult[element.timestamp][element.c_username]['data'] = element;
-                    ObjResult[element.timestamp][element.c_username]['order_info'] = new Object()
-                    ObjResult[element.timestamp][element.c_username]['order_info'][element.delivery_chosen] = new Object()
-                    ObjResult[element.timestamp][element.c_username]['order_info'][element.delivery_chosen][element.d_username] = new Object(
-                        {
-                            delivery_provided: element.h_delivery ,
-                            delivery_chosen: element.delivery_chosen,
-                            orders: Array(element)
-                        })
+        console.log(results.length)
+        if (results.length===0){
+            return res.render('hotel_order', { role: "hotel", hotel:req.hotel})
+        }
+        for (let i=0; i<results.length; i++){
+            // result[i]
+            // console.log("hello", results[i].id)
+            let Anotherquery=`select oioi.o_id as o_id, oioi.i_id as i_id, oioi.i_quantity as i_quantity, oioi.cost as t_cost, i.* from order_ioi oioi, item i where i.id=oioi.i_id and oioi.o_id='${results[i].id}' order by oioi.o_id;`
+            db.query(Anotherquery, function (error, anotherResults, fields) {
+                if (error) {
+                    console.log(error);
+                    // res.send(error)
+                    // return;
                 }
-                else{
-                    if (!ObjResult[element.timestamp][element.c_username]['order_info'][element.delivery_chosen]){
-                        ObjResult[element.timestamp][element.c_username]['order_info'][element.delivery_chosen] = new Object()
-                        ObjResult[element.timestamp][element.c_username]['order_info'][element.delivery_chosen][element.d_username] = new Object(
-                            {
-                                delivery_provided: element.h_delivery ,
-                                delivery_chosen: element.delivery_chosen,
-                                orders: Array(element)
-                            })
-                    }
-                    else{
-                        if (!ObjResult[element.timestamp][element.c_username]['order_info'][element.delivery_chosen][element.d_username]){
-                            // ObjResult[element.timestamp][element.c_username]['order_info'][element.delivery_chosen] = new Object()
-                            ObjResult[element.timestamp][element.c_username]['order_info'][element.delivery_chosen][element.d_username] = new Object(
-                                {
-                                    delivery_provided: element.h_delivery ,
-                                    delivery_chosen: element.delivery_chosen,
-                                    orders: Array(element)
-                                })
-                        }
-                        else{
-                            ObjResult[element.timestamp][element.c_username]['order_info'][element.delivery_chosen][element.d_username]['orders'].push(element)
-                        }
-                    }
+                // console.log(anotherResults)
+                let total_cost=0;
+                anotherResults.forEach(anotherResult => {
+                    total_cost+=anotherResult["t_cost"]
+                })
+                console.log(total_cost)
+                results[i].ioi = anotherResults;
+                results[i].total_cost = total_cost;
+                console.log(anotherResults)
+                
+                if (i===results.length-1){
+                    console.log(results)
+                    return res.render('hotel_order', { role: "hotel", objResult:results, hotel:req.hotel})
                 }
-            }
-        });
-        console.log(ObjResult)
+
+            })
+        }
+        console.log(results)
+        
+        // console.log(ObjResult)
         // res.send(ObjResult)
-        res.render('hotel_order', {role:"hotel", objResult:ObjResult, customer:req.customer})
+        // res.render('customer_order', { role: "customer", objResult:ObjResult, customer:req.customer})
     });
 })
 
 router.post('/order/:id/status/completed', ensureHotel,  (req, res) => {
-    let query = `UPDATE order_t SET payment_status='COMPLETED', order_status='COMPLETED' where id='${req.params.id}' AND '${req.hotel.username}' in (SELECT h_username FROM item where id=i_id) AND order_status='PENDING';`
+    let query = `UPDATE order_icht SET payment_status='COMPLETED', order_status='COMPLETED' where id='${req.params.id}' AND h_username='${req.hotel.username}' AND order_status='PENDING' AND (delivery_chosen=0 OR (delivery_chosen=1 AND d_username is NOT NULL));`
     db.query(query, function (error, results, fields) {
         if (error) {
             console.log(error);
@@ -312,7 +292,7 @@ router.post('/order/:id/status/completed', ensureHotel,  (req, res) => {
 })
 
 router.post('/order/:id/payment/completed', ensureHotel, (req, res) => {
-    let query = `UPDATE order_t SET payment_status='COMPLETED' where id='${req.params.id}' AND '${req.hotel.username}' in (SELECT h_username FROM item where id=i_id) AND order_status='PENDING';`
+    let query = `UPDATE order_icht SET payment_status='COMPLETED' where id='${req.params.id}' AND h_username='${req.hotel.username}' AND order_status='PENDING';`
     db.query(query, function (error, results, fields) {
         if (error) {
             console.log(error);

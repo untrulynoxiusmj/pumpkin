@@ -124,7 +124,7 @@ router.get('/', ensureCustomer, function(req, res, next) {
 
 router.get('/cart', ensureCustomer, (req, res) => {
     // let query = `SELECT * from cart where c_username='${req.customer.username}'`;
-    let query = `SELECT c.*, i.id as i_id, i.name as i_name, i.image as i_image, i.details as i_details, i.cost as i_cost, i.available, h.username as h_username, h.name as h_name, h.address as h_address, h.phone as h_phone, h.bio as h_bio, h.image as h_image, h.delivery as h_delivery, h.delivery_cost as h_delivery_cost, open,  cd.delivery_chosen FROM cart c, item i, hotel h, cart_deliver cd WHERE c.c_username = '${req.customer.username}' AND c.i_id = i.id AND i.h_username=h.username AND cd.c_username=c.c_username AND cd.h_username=h.username ORDER BY h.username;`
+    let query = `SELECT c.*, i.id as i_id, i.name as i_name, i.image as i_image, i.details as i_details, i.cost as i_cost, i.available, i.category,  h.username as h_username, h.name as h_name, h.address as h_address, h.phone as h_phone, h.bio as h_bio, h.image as h_image, h.delivery as h_delivery, h.delivery_cost as h_delivery_cost, open,  cd.delivery_chosen FROM cart c, item i, hotel h, cart_deliver cd WHERE c.c_username = '${req.customer.username}' AND c.i_id = i.id AND i.h_username=h.username AND cd.c_username=c.c_username AND cd.h_username=h.username ORDER BY h.username;`
     db.query(query, function (error, results, fields) {
         if (error) {
             console.log(error);
@@ -193,8 +193,11 @@ router.get('/order/:status', ensureCustomer, (req, res) => {
             res.send(error)
             return;
         }
-        // console.log(results)
-        // console.log(results.length)
+        console.log(results)
+        console.log(results.length)
+        if (results.length===0){
+            return res.render('customer_order', { role: "customer", customer:req.customer})
+        }
         for (let i=0; i<results.length; i++){
             // result[i]
             // console.log("hello", results[i].id)

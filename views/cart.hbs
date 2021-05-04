@@ -1,236 +1,120 @@
-
 {{#each hotelOrders}}
-
-
-    <div class="border">
-
-    <header id="site-header head">
-		<div class="container head">
-
-
-
-
-            <section id="cart">     
-                    <article class="product">
-                        <header>
-                            <a class="remove">
-                                <img src="/hotel/{{data.h_image}}" alt="">
-
-                                <h3>Remove product</h3>
-                            </a>
-                        </header>
-
-                        <div class="content">
-
-                            <h1 class="danger-text" >{{data.h_name}}</h1>
-
+    <div class="container">
+        <div class="row">
+            <div class="col s12">
+                <div class="full card horizontal">
+                    {{!-- <div class="card-image"><img src="/hotel/{{data.h_image}}"></div> --}}
+                    <div class="little card-image waves-effect waves-block waves-light">
+                        <img class="activator" src="/hotel/{{data.h_image}}">
+                    </div>
+                    <div class="card-stacked">
+                    <div class="card-content">
+                        <span class="card-title activator grey-text text-darken-4">
+                            <h5>{{data.h_name}} @ {{total_h_cost}} {{#if this.delivery_chosen}} + {{h_delivery_cost}} {{/if}}</h5>
+                            <br>
                             {{data.h_username}}
+                            <br>
                             {{data.h_phone}}
+                            <br>
                             {{data.h_address}}
-                        </div>
-
-
-                        <footer class="content">
-                            {{!-- <span class="qt-minus">-</span> --}}
-                            {{!-- <span class="qt-plus">+</span> --}}
-                            {{#if this.delivery_provided}}
-                                <form action="/customer/cart/deliver" method="post">
-                                    {{!-- <label for="">Delivery</label> --}}
-                                    <span class="material-icons qt green md-36">
-                                        delivery_dining
-                                    </span>
-                                    <span class="qt"><input onchange="submit()" type="radio" name={{@key}} value=1 id="" {{#if this.delivery_chosen}} checked {{/if}}>Yes</span>
-                                    <span class="qt"><input onchange="submit()" type="radio" name={{@key}} value=0 id="" {{#unless this.delivery_chosen}} checked {{/unless}}>No</span>
-                                </form>
-                            {{/if}}
-
-                            <h2 class="full-price danger-block">
-                                {{total_h_cost}}
-                            </h2>
-
-                            <h2 class="price">
-                                {{h_delivery_cost}}
-                            </h2>
-                        </footer>
-                        
-                    </article>
-            </section>
-
-
-
-
-
-
-			
-
-
-            
-		</div>
-	</header>
-
-	<div class="container shift">
-
-		<section id="cart"> 
-
-            {{#each orders}}
-
-                <article class="product">
-                    <header>
-                        <a class="remove">
-                            <img src="/item/{{this.i_image}}" alt="">
-
-                            <h3>Remove product</h3>
-                        </a>
-                    </header>
-
-                    <div class="content">
-
-                        <h1>{{this.i_name}}  {{this.available}}</h1>
-
-                        {{this.i_details}}
-
-                        {{!-- <div title="You have selected this product to be shipped in the color yellow." style="top: 0" class="color yellow"></div>
-                        <div style="top: 43px" class="type small">Size 11.5</div> --}}
+                            <br>
+                            {{data.bio}}
+                            <i class="material-icons right">more_vert</i>
+                        </span>
                     </div>
 
-                    <footer class="content">
-                        <form action="/customer//cart/{{this.i_id}}/quantity" method="post">
-                                <span class="material-icons-outlined qt green md-18">
-                                    shopping_bag
-                                </span>
-                                <span class="qt"><input min="1" onchange="submit()" type="number" name=quantity value={{this.i_quantity}} id=""></span>
-                                
-                                {{!-- <input type="submit" value="Change"> --}}
-                                {{!-- <span class="qt"><input onchange="submit()" type="radio" name={{@key}} value=0 id="" {{#unless this.delivery_chosen}} checked {{/unless}}>No</span> --}}
-                            </form>
-                            
-
-                            <form action="/customer/cart/{{this.i_id}}/remove" method="post">
-                                    {{!-- <label for="">Delivery</label> --}}
-                                    <span class="qt">
-                                        <input type="submit" value="Remove">
+                    <div class="card-action">
+                        <p>
+                            {{#if this.delivery_provided}}
+                                <form action="/customer/cart/deliver" method="post">
+                                    <span>
+                                        {{!-- <label for=""><i class="material-icons small">delivery_dining</i></label> --}}
+                                        Delivery:
+                                        <label>
+                                            <input onchange="submit()" type="radio" name={{@key}} value=1 id="" {{#if this.delivery_chosen}} checked {{/if}}>
+                                            <span>Yes</span>
+                                        </label>
+                                        <label>
+                                            <input onchange="submit()" type="radio" name={{@key}} value=0 id="" {{#unless this.delivery_chosen}} checked {{/unless}}>
+                                            <span>No</span>
+                                        </label>
                                     </span>
                                 </form>
-
-                        <h2 class="full-price">
-                            {{this.total_i_cost}}
-                        </h2>
-
-                        <h2 class="price">
-                            {{this.i_cost}}
-                        </h2>
-                    </footer>
-                </article>
-
-            {{/each}}
-		</section>
-
-	</div>
+                            {{/if}}
+                        </p>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    {{!-- <hr> --}}
-    {{!-- <hr> --}}
-    {{!-- <div class="container"></div> --}}
+
+
+    <div class="centered flex">
+           
+        {{#each orders}}
+            <div class="card sticky-action">
+
+                <div class="card-image waves-effect waves-block waves-light">
+                    <img class="activator" src="/item/{{this.i_image}}">
+                </div>
+                <div class="card-content">
+                    <span class="card-title activator grey-text text-darken-4">
+                        {{this.i_name}} @ {{this.i_quantity}} &#215; {{this.i_cost}}
+                        <i class="material-icons right">more_vert</i>
+                    </span>
+                </div>
+
+                <div class="card-action">
+                    <p>
+
+                        <div class="flex">
+                            <form action="/customer/cart/{{this.i_id}}/remove" method="post">  
+                            <button class="btn waves-effect waves-light" type="submit" name="action">
+                                Remove
+                                <i class="material-icons right">delete</i>
+                            </button>
+                            {{!-- <button type="submit" name="action" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></button> --}}
+                            </form> 
+                            
+                                {{!-- <span for="">Quantity</span> --}}
+                            <form action="/customer//cart/{{this.i_id}}/quantity" method="post">
+                                <input min="1" onchange="submit()" type="number" name=quantity value={{this.i_quantity}} id=""></span>
+                            </form>
+                        </div>
+                        
+                            
+                    </p>
+                </div>
+
+                <div class="card-reveal">
+                    <span class="card-title grey-text text-darken-4">{{this.i_name}} ({{this.category}})
+                        <i class="material-icons right">close</i>
+                    </span>
+                    <p>{{this.i_details}}</p>
+                </div>
+            </div>
+        {{/each}}
+    </div>
 {{/each}}
 
-{{!-- 
-{{customer.username}}
-{{customer.name}}
-{{customer.address}}
-{{customer.phone}}
-{{customer.image}}
-{{customer.bio}} --}}
+
+<div id="site-footer">
+    <div class="container clearfix">
+
+        <div class="fl left">
+            <h2 class="subtotal">Subtotal: &#x20b9; <span>{{total_cost}}</span></h2>
+            <h3 class="shipping">Shipping: &#x20b9; <span>{{delivery_cost}}</span></h3>
+        </div>
 
 
+        <div class="fr right">
+            <h2 class="total">Total: &#x20b9; <span>{{total_order_cost}}</span></h2>
+            <form action="/customer/order" method="post">
+                <input type="text" name="address" value={{customer.address}} id="">
+                <button type="submit" class="btn">Checkout</a>
+            </form>
+        </div>
 
-	<footer id="site-footer">
-		<div class="container clearfix">
-
-			<div class="left">
-				<h2 class="subtotal">Subtotal: &#x20b9; <span>{{total_cost}}</span></h2>
-				<h3 class="shipping">Shipping: &#x20b9; <span>{{delivery_cost}}</span></h3>
-			</div>
-
-
-			<div class="right">
-                <h2 class="total">Total: &#x20b9; <span>{{total_order_cost}}</span></h2>
-                <form action="/customer/order" method="post">
-                    <input type="text" name="address" value={{customer.address}} id="">
-                    <button type="submit" class="btn">Checkout</a>
-                </form>
-			</div>
-
-		</div>
-	</footer>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	{{!-- <header id="site-header">
-		<div class="container">
-			<h1>Shopping cart <span>[</span> <em><a href="https://codepen.io/tag/rodeo-007" target="_blank">     Go To  Home Page</a></em> <span class="last-span is-open">]</span></h1>
-		</div>
-	</header>
-
-	<div class="container">
-
-		<section id="cart"> 
-			<article class="product">
-				<header>
-					<a class="remove">
-						<img src="http://www.sneakerfreaker.com/content/uploads/2014/03/sekure-d-custom-air-jordan-10-teal-graffiti-5.jpg" alt="">
-
-						<h3>Remove product</h3>
-					</a>
-				</header>
-
-				<div class="content">
-
-					<h1>Air Jordan 10 “Teal Graffiti” Custom</h1>
-
-Transforming a classic colorway into an Air Jordan 10 “Teal Graffiti” Custom that sports an Air Tech Challenge-inspired print throughout the upper, complementing the Graffiti print.
-
-					<div title="You have selected this product to be shipped in the color yellow." style="top: 0" class="color yellow"></div>
-					<div style="top: 43px" class="type small">Size 11.5</div>
-				</div>
-
-				<footer class="content">
-					<span class="qt-minus">-</span>
-					<span class="qt">2</span>
-					<span class="qt-plus">+</span>
-
-					<h2 class="full-price">
-						69.98
-					</h2>
-
-					<h2 class="price">
-						34.99
-					</h2>
-				</footer>
-			</article>
-		</section>
-
-	</div> --}}
-
+    </div>
+</div>

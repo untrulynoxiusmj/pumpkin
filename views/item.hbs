@@ -1,50 +1,50 @@
-<center><h1>{{hotel}}</h1></center> 
-<div class="container">
-    <div class="card__wrap--outer">
-        {{#each results}}
-          <div class="card__wrap--inner">
-                <div class="card">
-                    <img src="/item/{{this.image}}">
-                    <div class="card__item">
-                        <h2>{{this.name}}</h2>
-                    </div>
-                    <div class="card__sub">
-                        <small>{{this.cost}}</small>
-                    </div>
-                    <div class="card__sub capital">
-                        <small>{{this.category}}</small>
-                    </div>
-                    <div class="card__item flexible">
-                        <small>{{this.details}}</small>
-                    </div>
-                    {{!-- <div class="card__item">
-                        <small>Reading Time: 4min</small>
-                    </div> --}}
+<center><h1>{{hotel}}</h1></center>
+<div class="centered flex">
+    {{#each results}}
+        <div class="card sticky-action">
 
-                    {{#if ../customer}}
-                        <div class="card__footer">
-                            <form action="/customer/cart/{{this.id}}" method="post">
-                                <input type="submit" value="Add to Cart">
-                            </form>
-                        {{!-- <a class="pull" href="/cart/{{this.id}}"><small>Add to Cart</small></a> --}}
-                        {{!-- <a class="push" href="#"><small>{{this.available}}</small></a> --}}
-                        </div>
+            <div class="card-image waves-effect waves-block waves-light">
+                <img class="activator" src="/item/{{this.image}}">
+            </div>
+            <div class="card-content">
+                <span class="card-title activator grey-text text-darken-4">
+                    {{this.name}} @ {{this.cost}}
+                    <i class="material-icons right">more_vert</i>
+                </span>
+            </div>
+
+            <div class="card-action">
+                <p>
+                    {{#if ../customer}} 
+                        {{#if available}}
+                            <form action="/customer/cart/{{this.id}}" method="post">  
+                                <button class="btn waves-effect waves-light" type="submit" name="action">
+                                    Add to Cart
+                                    <i class="material-icons right">add</i>
+                                </button>
+                                {{!-- <button type="submit" name="action" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></button> --}}
+                            </form> 
+                        {{/if}}
                     {{/if}}
 
-                    {{!-- <h1>{{../customer}}</h1>
-                    <h1>{{../authorized}}</h1> --}}
-
-                    {{#if ../authorized}}
-                        <div class="card__footer">
-                            <form action="/hotel/item/{{this.id}}/edit" method="get">
-                                <input type="submit" value="Edit">
-                            </form>
-                        {{!-- <a class="pull" href="/cart/{{this.id}}"><small>Add to Cart</small></a> --}}
-                        {{!-- <a class="push" href="#"><small>{{this.available}}</small></a> --}}
-                        </div>
+                    {{#if ../authorized}} 
+                        <form action="/hotel//item/{{this.id}}/edit" method="get">  
+                            <button class="btn waves-effect waves-light" type="submit" name="action">
+                                Edit
+                                <i class="material-icons right">edit</i>
+                            </button>
+                            {{!-- <button type="submit" name="action" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">edit</i></button> --}}
+                        </form> 
                     {{/if}}
-                </div>
-          </div>
-        {{/each}}
-    </div>
+                </p>
+            </div>
+
+            <div class="card-reveal">
+                <span class="card-title grey-text text-darken-4">{{this.name}} ({{this.category}})
+                    <i class="material-icons right">close</i>
+                </span>
+                <p>{{this.details}}</p>
+            </div>
+        </div>
+    {{/each}}
 </div>

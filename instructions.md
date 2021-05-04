@@ -79,34 +79,6 @@ CREATE TABLE cart_deliver
   FOREIGN KEY (h_username) REFERENCES hotel(username)
 );
 
-CREATE TABLE order_t
-(
-  id                         INT PRIMARY KEY AUTO_INCREMENT,                
-  c_username                 VARCHAR(150) NOT NULL,                
-  i_id                       INT NOT NULL,
-  i_quantity                 INT NOT NULL DEFAULT 1,
-  cost                       INT NOT NULL,
-  delivery_chosen            BOOL DEFAULT 0,
-  d_username                 VARCHAR(150),
-  address                    VARCHAR(150) NOT NULL,
-  timestamp                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  payment_status             ENUM('PENDING', 'COMPLETED', 'CANCELLED') DEFAULT 'PENDING',
-  order_status               ENUM('PENDING', 'COMPLETED', 'CANCELLED') DEFAULT 'PENDING',
-  FOREIGN KEY (c_username) REFERENCES customer(username),
-  FOREIGN KEY (i_id) REFERENCES item(id),
-  FOREIGN KEY (d_username) REFERENCES delivery(username)
-);
-
-
-
-
-
-
-
-
-
-
-
 
 CREATE TABLE order_icht
 (
@@ -144,9 +116,3 @@ CREATE TABLE order_ioi
 
 
 
-
-
-<!-- 
-INSERT INTO order_icht (c_username, h_username, delivery_chosen, delivery_cost, address) select distinct ca.c_username, i.h_username , cd.delivery_chosen, h.delivery_cost, "basant vihar" from cart ca, item i, cart_deliver cd, hotel h where ca.c_username="chetangarg365" and ca.i_id=i.id AND cd.c_username=ca.c_username AND i.h_username=cd.h_username AND i.h_username=h.username order by i.h_username; -->
-
-<!-- select o.id as oid, ca.i_id, ca.i_quantity, (ca.i_quantity*i.cost) as cost from order_icht o, cart ca, item i where ca.i_id=i.id AND ca.i_id in (select id from item where h_username=o.h_username) order by oid; -->
