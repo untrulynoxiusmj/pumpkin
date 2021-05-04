@@ -1086,3 +1086,8 @@ label {
 .moved {
   margin-right: 1em;
 }
+
+.mid {
+  margin: auto;
+  width: 60%;
+}

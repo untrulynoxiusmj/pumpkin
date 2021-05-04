@@ -125,8 +125,8 @@ router.get('/', function(req, res, next) {
   });
 
 router.get('/details/:h_username', (req, res) => {
-    let query = `SELECT * FROM item i WHERE h_username='${req.params.h_username}'`;
-    let Anotherquery = `SELECT * FROM hotel WHERE username='${req.params.h_username}'`;
+    let query = `SELECT * FROM item i WHERE h_username='${req.params.h_username}';`;
+    let Anotherquery = `SELECT * FROM hotel WHERE username='${req.params.h_username}';`;
     db.query(query, function (error, results, fields) {
         if (error) {
             console.log(error);
@@ -150,32 +150,25 @@ router.get('/details/:h_username', (req, res) => {
                     }
                     console.log(decoded) // bar
                     if (decoded.role=='customer'){
-                                res.render('item', {customer:1, role:"customer", hotel:anotherResult[0], results: results})
+                        let oneMoreQuery = `SELECT i.*, (i.id in (SELECT i_id as id from cart ca where ca.c_username="${decoded.username}")) as accepted FROM item i WHERE h_username='${req.params.h_username}'`;
+                        db.query(oneMoreQuery, function (error, oneMoreResult, fields) {
+                            if (error) {
+                                console.log(error);
+                                res.render('item', { hotel:anotherResult[0], results: results})
                                 return;
+                            }
+                            console.log(oneMoreResult)
+                            res.render('item', {customer:1, role:"customer", hotel:anotherResult[0], results: oneMoreResult})
+                            return;
+                        })
                     }
-                    if (decoded.username==req.params.h_username && decoded.role=='hotel'){
+                    else if (decoded.username==req.params.h_username && decoded.role=='hotel'){
                         res.render('item', {"role":"hotel", authorized:1, hotel:anotherResult[0], results: results})
                         return
                     }
-                    res.render('item', { hotel:anotherResult[0], results: results})
-                    // let query = `SELECT * FROM customer WHERE username='${decoded.username}' LIMIT 1`;
-                    // db.query(query, function (error, results, fields) {
-                    //     if (error) {
-                    //         console.log(error);
-                    //         res.redirect("/customer/login")
-                    //         return;
-                    //     }
-                    //     if (results.length==0){
-                    //         res.redirect("/customer/login")
-                    //         return;
-                    //     }
-                    //     if (decoded.role!=='customer'){
-                    //         res.redirect("/customer/login")
-                    //         return;
-                    //     }
-                    //     req.customer = results[0];
-                    //     next() 
-                    // });
+                    else {
+                        res.render('item', { hotel:anotherResult[0], results: results})
+                    }
                 })
             } catch(err) {
                 res.redirect("/customer/login")
