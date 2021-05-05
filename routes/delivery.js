@@ -17,7 +17,7 @@ const router = express.Router();
 const saltRounds = 10;
 
 router.get('/signup', function(req, res, next) {
-    res.render('signup', {role:'delivery'});
+    res.render('signup', {ofRole:'delivery'});
 });
 
 
@@ -49,7 +49,7 @@ router.post('/signup',  upload.single('image'), function(req, res, next) {
 });
 
 router.get('/login', function(req, res, next) {
-    res.render('login', {role:'delivery'});
+    res.render('login', {ofRole:'delivery'});
 });
 
 router.post('/login', function(req, res, next) {

@@ -16,7 +16,7 @@ const router = express.Router();
 const saltRounds = 10;
 
 router.get('/signup', function(req, res, next) {
-    res.render('signup', {hotel: true, role: 'hotel'});
+    res.render('signup', {ofRole: 'hotel'});
 });
 
 
@@ -49,7 +49,7 @@ router.post('/signup', multer({ dest: 'uploads/hotel/' }).single('image'), funct
 });
 
 router.get('/login', function(req, res, next) {
-    res.render('login', {role:'hotel'});
+    res.render('login', {ofRole:'hotel'});
 });
 
 router.get('/edit', ensureHotel, (req, res) => {
@@ -125,7 +125,21 @@ router.get('/list', function(req, res, next) {
             res.send(error)
             return;
         }
-        res.render('hotel', {results: results, active: 'hotel'})
+        const token = req.cookies.token;
+        if (!token) return res.render('hotel', {results: results, active: 'hotel'})
+        try {
+            jwt.verify(token, process.env.JWT_SECRET, function(err, decoded) {
+                if (err) {
+                    console.log(err);
+                    res.render('hotel', {results: results, active: 'hotel'})
+                    return;
+                }
+                console.log(decoded.role)
+                return res.render('hotel', {results: results, active: 'hotel', role:decoded.role})
+            })
+        } catch(err) {
+            res.redirect("/customer/login")
+        }
     })
   });
 
@@ -172,7 +186,7 @@ router.get('/details/:h_username', (req, res) => {
                         return
                     }
                     else {
-                        res.render('item', { hotel:anotherResult[0], results: results})
+                        res.render('item', { hotel:anotherResult[0], results: results, role:decoded.role})
                     }
                 })
             } catch(err) {

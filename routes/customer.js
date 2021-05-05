@@ -40,7 +40,7 @@ const saltRounds = 10;
 
 
 router.get('/signup', function(req, res, next) {
-    res.render('signup', {role:'customer'});
+    res.render('signup', {ofRole:'customer'});
 });
 
 // router.get('/edit', ensureCustomer, function(req, res, next) {
@@ -76,7 +76,7 @@ router.post('/signup', upload.single('image'), function(req, res, next) {
 });
 
 router.get('/login', function(req, res, next) {
-    res.render('login', {role:'customer'});
+    res.render('login', {ofRole:'customer'});
 });
 
 router.post('/login', function(req, res, next) {
