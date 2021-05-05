@@ -6,18 +6,17 @@ module.exports = {
     ensureGuest: (req, res, next) => {
         console.log(req.cookies)
         const token = req.cookies.token;
-        if (!token) next()
+        if (!token) return next()
         try {
             jwt.verify(token, process.env.JWT_SECRET, function(err, decoded) {
                 if (err) {
                     console.log(err);
-                    next()
-                    return
+                    return next()
                 }
                 return res.redirect(`/${decoded.role}`)
             })
         } catch(err) {
-            next()
+            return next()
         }
     }
 }

@@ -10,7 +10,11 @@
                     <div class="card-stacked">
                     <div class="card-content">
                         <span class="card-title activator grey-text text-darken-4">
-                            <h5>{{this.h_name}} @ {{total_cost}} {{#if this.delivery_chosen}} + {{delivery_cost}} {{/if}}</h5>
+                            <h5>{{this.h_name}} @ {{total_cost}} {{#if this.delivery_chosen}} + {{delivery_cost}} {{/if}}
+                                <a href="/hotel/details/{{this.h_username}}" class="btn waves-effect waves-light moved-left">
+                                    <i class="material-icons">visibility</i>
+                                </a>
+                            </h5>
                             {{!-- <br> --}}
                             {{!-- {{this.h_username}} --}}
                             {{!-- <br> --}}
@@ -21,7 +25,14 @@
                             {{this.bio}}
                             <br> --}}
                             <br>
-                            <h5>{{this.c_username}}'s order</h5>
+                            <h5>
+                                <a href="/customer/details/{{c_username}}">
+                                    <button class="btn waves-effect waves-light normal">
+                                        {{c_username}}
+                                    </button>
+                                </a> 
+                                's order
+                            </h5>
                             <br>
                             Deliver To: {{address}}
                             {{!-- {{#if delivery_chosen}}

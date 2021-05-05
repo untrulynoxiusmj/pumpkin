@@ -10,7 +10,11 @@
                     <div class="card-stacked">
                     <div class="card-content">
                         <span class="card-title activator grey-text text-darken-4">
-                            <h5>{{this.c_name}} @ {{total_cost}} {{#if this.delivery_chosen}} + {{delivery_cost}} {{/if}}</h5>
+                            <h5>{{this.c_name}} @ {{total_cost}} {{#if this.delivery_chosen}} + {{delivery_cost}} {{/if}}
+                                <a href="/customer/details/{{this.c_username}}" class="btn waves-effect waves-light moved-left">
+                                    <i class="material-icons">visibility</i>
+                                </a>
+                            </h5>
                             {{!-- <br> --}}
                             {{!-- {{this.h_username}} --}}
                             {{!-- <br> --}}
@@ -26,7 +30,12 @@
                                 {{#ifCond d_username null}}
                                     No delivery boy assigned
                                 {{else}}
-                                    {{d_username}} is assigned
+                                    <a href="/delivery/details/{{d_username}}">
+                                        <button class="btn waves-effect waves-light normal">
+                                            {{d_username}}
+                                        </button>
+                                    </a> 
+                                    is assigned
                                 {{/ifCond}}
                             {{else}}
                                     No Delivery Required

@@ -119,8 +119,34 @@ router.post('/login', function(req, res, next) {
 
 router.get('/', ensureCustomer, function(req, res, next) {
     console.log(req.customer)
-    res.render('index', {auth:true, user : req.customer, customer:true, role:'customer'} );
+    res.render('index', {auth:true, user : req.customer, customer:true, role:'customer', ofRole:'customer'} );
   });
+
+  router.get('/details/:c_username', (req, res) => {
+    let query = `SELECT * from customer where username="${req.params.c_username}"`;
+    db.query(query, function (error, results, fields) {
+        if (error) {
+            console.log(error);
+            res.send(error)
+            return;
+        }
+        const token = req.cookies.token;
+        if (!token) return res.render('index', {user: results[0], active: 'hotel', ofRole:"customer"})
+        try {
+            jwt.verify(token, process.env.JWT_SECRET, function(err, decoded) {
+                if (err) {
+                    console.log(err);
+                    res.render('index', {user: results[0], active: 'hotel', ofRole:"customer"})
+                    return;
+                }
+                console.log(decoded.role)
+                return res.render('index', {user: results[0], role:decoded.role, active: 'hotel', role:decoded.role, ofRole:"customer"})
+            })
+        } catch(err) {
+            res.redirect("/home")
+        }
+    })
+})
 
 router.get('/cart', ensureCustomer, (req, res) => {
     // let query = `SELECT * from cart where c_username='${req.customer.username}'`;

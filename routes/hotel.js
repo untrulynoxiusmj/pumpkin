@@ -70,7 +70,8 @@ router.post('/edit', ensureHotel, function(req, res, next) {
             res.send(error)
             return;
         }
-        res.send(results)
+        // res.send(results)
+        res.redirect("/")
     });
 });
 
@@ -103,7 +104,7 @@ router.post('/login', function(req, res, next) {
                     username: results[0].username,
                     role: 'hotel',
                   }, process.env.JWT_SECRET, { expiresIn: '20m' });
-                res.cookie('token', token).redirect(`/hotel/details/${user.username}`)
+                res.cookie('token', token).redirect(`/hotel`)
             });
         });
     } catch (error) {
@@ -113,9 +114,18 @@ router.post('/login', function(req, res, next) {
 });
 
 router.get('/', ensureHotel, function(req, res, next) {
-    console.log(req.delivery)
-    res.render('index', { user: req.hotel, role:'hotel'});
-  });
+    let query = `SELECT * FROM item i WHERE h_username='${req.hotel.username}';`;
+    // let Anotherquery = `SELECT * FROM hotel WHERE username='${req.hotel.username}';`;
+    db.query(query, function (error, results, fields) {
+        if (error) {
+            console.log(error);
+            res.send(error)
+            return;
+        }
+        res.render('item', {"role":"hotel", authorized:1, hotel:req.hotel, results: results})
+    });
+});
+
 
 router.get('/list', function(req, res, next) {
     let query = `SELECT username, name, address, phone, bio, image, delivery, open FROM hotel`;

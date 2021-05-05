@@ -1087,6 +1087,10 @@ label {
   margin-right: 1em;
 }
 
+.moved-left {
+  margin-left: 1em;
+}
+
 .mid {
   margin: auto;
   width: 60%;
@@ -1094,6 +1098,10 @@ label {
 
 .sidenav-overlay {
   z-index: 99;
+}
+
+.normal {
+  text-transform: none;
 }
 
 @media only screen and (max-width: 1500px) {

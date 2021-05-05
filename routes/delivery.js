@@ -92,8 +92,35 @@ router.post('/login', function(req, res, next) {
 
 router.get('/', ensureDelivery, function(req, res, next) {
     console.log(req.delivery)
-    res.render('index', { user: req.delivery, role:'delivery'});
+    res.render('index', { user: req.delivery, role:'delivery', ofRole:'delivery'});
   });
+
+
+router.get('/details/:d_username', (req, res) => {
+    let query = `SELECT * from delivery where username="${req.params.d_username}"`;
+    db.query(query, function (error, results, fields) {
+        if (error) {
+            console.log(error);
+            res.send(error)
+            return;
+        }
+        const token = req.cookies.token;
+        if (!token) return res.render('index', {user: results[0], active: 'hotel', ofRole:"delivery"})
+        try {
+            jwt.verify(token, process.env.JWT_SECRET, function(err, decoded) {
+                if (err) {
+                    console.log(err);
+                    res.render('index', {user: results[0], active: 'hotel', ofRole:"delivery"})
+                    return;
+                }
+                console.log(decoded.role)
+                return res.render('index', {user: results[0], role:decoded.role, active: 'hotel', role:decoded.role, ofRole:"delivery"})
+            })
+        } catch(err) {
+            res.redirect("/home")
+        }
+    })
+})
 
 router.get('/order/unassigned', ensureDelivery, function(req, res, next) {
         let query = `select oicht.*, h.username as h_username,  h.name as h_name,  h.address as h_address,  h.phone as h_phone,  h.bio as h_bio,  h.image as h_image,  h.delivery as h_delivery from order_icht oicht, hotel h where oicht.delivery_chosen=1 AND oicht.d_username is NULL AND oicht.order_status='PENDING' AND oicht.h_username=h.username ORDER BY oicht.timestamp DESC;`
