@@ -41,7 +41,7 @@
         </div>
 
         
-        {{#if ofRole "hotel"}}
+        {{#ifCond ofRole "hotel"}}
           <div class="row">
             <div class="input-field col s12">
               
@@ -76,7 +76,7 @@
               </span>
             </div>
           </div>
-      {{/if}}
+      {{/ifCond}}
 
 
         <div class="file-field input-field">
@@ -93,14 +93,15 @@
           <img src="" alt="" id="pre" style="display: none;">
         </div>
 
-
-        <div class="row">
-          <div class="input-field col s12">
-            <i class="material-icons prefix">info</i>
-            <input required name="delivery_cost" id="delivery_cost" type="number" class="validate">
-            <label for="delivery_cost">Delivery cost</label>
+        {{#ifCond ofRole "hotel"}}
+          <div class="row">
+            <div class="input-field col s12">
+              <i class="material-icons prefix">info</i>
+              <input required name="delivery_cost" id="delivery_cost" type="number" class="validate">
+              <label for="delivery_cost">Delivery cost</label>
+            </div>
           </div>
-        </div>
+        {{/ifCond}}
 
 
         <div class="row">
