@@ -2,6 +2,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const {ensureCustomer} = require('../middleware/customer')
+const {ensureGuest} = require('../middleware/guest')
 
 const db = require('../config/db');
 const { commit } = require('../config/db');
@@ -39,7 +40,7 @@ const saltRounds = 10;
 
 
 
-router.get('/signup', function(req, res, next) {
+router.get('/signup', ensureGuest, function(req, res, next) {
     res.render('signup', {ofRole:'customer'});
 });
 
@@ -48,7 +49,7 @@ router.get('/signup', function(req, res, next) {
 // });
 
 
-router.post('/signup', upload.single('image'), function(req, res, next) {
+router.post('/signup', ensureGuest, upload.single('image'), function(req, res, next) {
     let customer = req.body;
     console.log(customer.password)
     console.log(saltRounds)
@@ -75,11 +76,11 @@ router.post('/signup', upload.single('image'), function(req, res, next) {
     }
 });
 
-router.get('/login', function(req, res, next) {
+router.get('/login', ensureGuest, function(req, res, next) {
     res.render('login', {ofRole:'customer'});
 });
 
-router.post('/login', function(req, res, next) {
+router.post('/login', ensureGuest, function(req, res, next) {
     let user = req.body;
     console.log(process.env.JWT_SECRET)
     try {
@@ -163,9 +164,9 @@ router.get('/cart', ensureCustomer, (req, res) => {
         let ObjResultKeyHotel = new Object();
         results.forEach(element => {
             element['total_i_cost']=element['i_cost']*element['i_quantity']
-            total_cost += element['total_i_cost'];
+            if (element.available && element.open) total_cost += element['total_i_cost'];
             if (!ObjResultKeyHotel[element.h_username]){
-                if (element.h_delivery && element.delivery_chosen) delivery_cost+=element.h_delivery_cost;
+                if (element.available && element.h_delivery && element.delivery_chosen && element.open) delivery_cost+=element.h_delivery_cost;
                 ObjResultKeyHotel[element.h_username] = new Object({
                     data: {
                         h_username: element.h_username,
@@ -177,15 +178,17 @@ router.get('/cart', ensureCustomer, (req, res) => {
                         open: element.open,
                         h_delivery_cost : element.h_delivery_cost
                     },
-                    total_h_cost : element.total_i_cost,
-                    h_delivery_cost : element.h_delivery_cost,
+                    total_h_cost : element.total_i_cost*element.available*element.open,
+                    h_delivery_cost : element.h_delivery_cost*element.h_delivery*element.delivery_chosen*element.available*element.open,
                     delivery_provided: element.h_delivery ,
                     delivery_chosen: element.delivery_chosen,
                     orders: Array(element)
                 });
             }
             else{
-                ObjResultKeyHotel[element.h_username]['total_h_cost'] += element.total_i_cost
+                ObjResultKeyHotel[element.h_username]['total_h_cost'] += element.total_i_cost*element.available*element.open
+                if (ObjResultKeyHotel[element.h_username]['h_delivery_cost']==0) delivery_cost+=element.h_delivery_cost*element.h_delivery*element.delivery_chosen*element.available*element.open;
+                ObjResultKeyHotel[element.h_username]['h_delivery_cost'] = element.h_delivery_cost*element.h_delivery*element.delivery_chosen*element.available*element.open;
                 ObjResultKeyHotel[element.h_username]['orders'].push(element);
             }
         });

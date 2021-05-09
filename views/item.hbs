@@ -1,10 +1,23 @@
+{{#if authorized}}
+    <div class="fixed-action-btn">
+    <a class="btn-floating btn-large red">
+        <i class="large material-icons"><span class="material-icons-outlined">more_vert</span></i>
+    </a>
+    <ul>
+        {{!-- <li><a class="btn-floating red"><i class="material-icons">insert_chart</i></a></li> --}}
+        <li><a href="/hotel/edit" class="btn-floating blue"><i class="material-icons">edit</i></a></li>
+        <li><a href="/hotel/item/create" class="btn-floating green"><i class="material-icons">add</i></a></li>
+        {{!-- <li><a class="btn-floating blue"><i class="material-icons">attach_file</i></a></li> --}}
+    </ul>
+    </div>
+{{/if}}
 <div class="container">
     <div class="row">
         <div class="col s12">
             <div class="full card horizontal">
                 {{!-- <div class="card-image"><img src="/hotel/{{hotel.image}}"></div> --}}
                 <div class="little card-image waves-effect waves-block waves-light">
-                    <img class="activator" src="/hotel/{{hotel.image}}">
+                    <img class="activator {{#unless hotel.open}}grey-image{{/unless}}" src="/hotel/{{hotel.image}}">
                 </div>
                 <div class="card-stacked">
                 <div class="card-content">
@@ -46,7 +59,7 @@
         <div class="card sticky-action">
 
             <div class="card-image waves-effect waves-block waves-light">
-                <img class="activator" src="/item/{{this.image}}">
+                <img class="activator {{#unless available}}grey-image{{/unless}} {{#unless ../hotel.open}}grey-image{{/unless}}" src="/item/{{this.image}}">
             </div>
             <div class="card-content">
                 <span class="card-title activator grey-text text-darken-4">
@@ -85,22 +98,6 @@
                     {{/if}}
 
                     {{#if ../authorized}} 
-
-
-
-                        <div class="fixed-action-btn">
-                        <a class="btn-floating btn-large red" href="/hotel/edit">
-                            <i class="large material-icons">mode_edit</i>
-                        </a>
-                        {{!-- <ul>
-                            <li><a class="btn-floating red"><i class="material-icons">insert_chart</i></a></li>
-                            <li><a class="btn-floating yellow darken-1"><i class="material-icons">format_quote</i></a></li>
-                            <li><a class="btn-floating green"><i class="material-icons">publish</i></a></li>
-                            <li><a class="btn-floating blue"><i class="material-icons">attach_file</i></a></li>
-                        </ul> --}}
-                        </div>
-
-
                         <form class="line" action="/hotel/item/{{this.id}}/edit" method="get">  
                             <button class="btn waves-effect waves-light" type="submit">
                                 Edit

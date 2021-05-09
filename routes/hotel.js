@@ -8,6 +8,7 @@ const db = require('../config/db');
 
 const multer = require("multer");
 const customer = require('../middleware/customer');
+const { ensureGuest } = require('../middleware/guest');
 
 var upload = multer({ dest: 'uploads/hotel/' })
 
@@ -15,12 +16,12 @@ const router = express.Router();
 
 const saltRounds = 10;
 
-router.get('/signup', function(req, res, next) {
+router.get('/signup', ensureGuest, function(req, res, next) {
     res.render('signup', {ofRole: 'hotel'});
 });
 
 
-router.post('/signup', multer({ dest: 'uploads/hotel/' }).single('image'), function(req, res, next) {
+router.post('/signup', ensureGuest, multer({ dest: 'uploads/hotel/' }).single('image'), function(req, res, next) {
     console.log(req.file)
     let hotel = req.body;
     console.log(hotel.password)
@@ -48,7 +49,7 @@ router.post('/signup', multer({ dest: 'uploads/hotel/' }).single('image'), funct
     }
 });
 
-router.get('/login', function(req, res, next) {
+router.get('/login', ensureGuest, function(req, res, next) {
     res.render('login', {ofRole:'hotel'});
 });
 
@@ -75,7 +76,7 @@ router.post('/edit', ensureHotel, function(req, res, next) {
     });
 });
 
-router.post('/login', function(req, res, next) {
+router.post('/login', ensureGuest, function(req, res, next) {
     let user = req.body;
     console.log(process.env.JWT_SECRET)
     try {

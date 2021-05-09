@@ -1079,6 +1079,11 @@ label {
   color: black !important;
 }
 
+.grey-image {
+  -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+  filter: grayscale(100%);
+}
+
 .non-primary {
   background-color: #26a69a !important;
 }

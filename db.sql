@@ -1,3 +1,6 @@
+CREATE DATABASE pumpkin;
+USE pumpkin;
+
 CREATE TABLE hotel
 (
   username            VARCHAR(150) NOT NULL,                
@@ -96,7 +99,7 @@ CREATE TABLE order_icht
   FOREIGN KEY (c_username) REFERENCES customer(username),
   FOREIGN KEY (h_username) REFERENCES hotel(username),
   FOREIGN KEY (d_username) REFERENCES delivery(username)
-)
+);
 
 CREATE TABLE order_ioi
 (       

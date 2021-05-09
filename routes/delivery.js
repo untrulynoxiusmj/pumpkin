@@ -2,6 +2,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const {ensureDelivery} = require('../middleware/delivery')
+const {ensureGuest} = require('../middleware/guest')
 
 const db = require('../config/db');
 const { commit } = require('../config/db');
@@ -16,12 +17,12 @@ const router = express.Router();
 
 const saltRounds = 10;
 
-router.get('/signup', function(req, res, next) {
+router.get('/signup', ensureGuest, function(req, res, next) {
     res.render('signup', {ofRole:'delivery'});
 });
 
 
-router.post('/signup',  upload.single('image'), function(req, res, next) {
+router.post('/signup', ensureGuest, upload.single('image'), function(req, res, next) {
     let delivery = req.body;
     console.log(delivery.password)
     console.log(saltRounds)
@@ -48,11 +49,11 @@ router.post('/signup',  upload.single('image'), function(req, res, next) {
     }
 });
 
-router.get('/login', function(req, res, next) {
+router.get('/login', ensureGuest, function(req, res, next) {
     res.render('login', {ofRole:'delivery'});
 });
 
-router.post('/login', function(req, res, next) {
+router.post('/login', ensureGuest, function(req, res, next) {
     let user = req.body;
     console.log(process.env.JWT_SECRET)
     try {
