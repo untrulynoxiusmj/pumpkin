@@ -139,7 +139,7 @@
         <div class="fr right">
             <h2 class="total">Total: &#x20b9; <span>{{total_order_cost}}</span></h2>
             <form action="/customer/order" method="post">
-                <input type="text" name="address" value={{customer.address}} id="">
+                <input type="text" name="address" value="{{customer.address}}" id="">
                 <button type="submit" class="btn">Checkout</a>
             </form>
         </div>
