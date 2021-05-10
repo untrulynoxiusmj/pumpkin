@@ -16,43 +16,6 @@ dotenv.config();
 
 const app = express();
 
-// view engine setup
-// app.set('views', path.join(__dirname, 'views'));
-// app.set('view engine', 'hbs');
-// app.engine('handlebars', exphbs({defaultLayout: 'main'}));
-
-// app.engine(".hbs", exphbs({ defaultLayout: "main", extname: ".hbs" }));
-// app.set("view engine", ".hbs");
-
-
-// Handlebars.registerHelper('ifCond', function(v1, v2, options) {
-//   if(v1 === v2) {
-//     return options.fn(this);
-//   }
-//   return options.inverse(this);
-// });
-
-
-// var hbs = exphbs.create({
-//   helpers: {
-//       ifCond: function(v1, v2, options) {
-//         if(v1 === v2) {
-//           return options.fn(this);
-//         }
-//         return options.inverse(this);
-//       },
-//       getStringifiedJson: function (value) {
-//           return JSON.stringify(value);
-//       }
-//   },
-//   defaultLayout: 'main',
-//   extname: ".hbs",
-//   partialsDir: ['views/partials/']
-// });
-
-// const exphbs  = require('express-handlebars');
-
-//when configuring the app view engine
 app.engine('.hbs', exphbs({
   defaultLayout: "main",
   extname: '.hbs',
@@ -67,11 +30,6 @@ app.engine('.hbs', exphbs({
 }));
 app.set('view engine', '.hbs');
 
-
-// var hbs = exphbs.create({ /* config */ });
-
-// app.engine('handlebars', hbs.engine);
-// app.set('view engine', '.hbs');
 
 
 app.use(logger('dev'));

@@ -21,24 +21,6 @@ const router = express.Router();
 const saltRounds = 10;
 
 
-// var storage = multer.diskStorage({
-//     destination: function (req, file, cb) {
-//       cb(null, 'storage')
-//     },
-//     filename: function (req, file, cb) {
-//       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-//       cb(null, file.fieldname + '-' + uniqueSuffix)
-//     }
-//   })
-  
-//   var upload = multer({ storage: storage })
-
-
-
-
-
-
-
 
 router.get('/signup', ensureGuest, function(req, res, next) {
     res.render('signup', {ofRole:'customer'});
@@ -363,19 +345,6 @@ router.post('/order/:id/cancel', ensureCustomer, (req, res) => {
 
 router.post('/order', ensureCustomer, (req, res) => {
     console.log(req.body)
-    // INSERT INTO dues_storage
-    // SELECT d.*, CURRENT_DATE()
-    // FROM dues d
-    // WHERE id = 5;
-    // mapUndefTo0  = {
-    //     undefined: 0,
-    //     0: 0,
-    //     1: 1
-    // }
-    // let query = `INSERT INTO order_t ( c_username, i_id, i_quantity, cost, delivery_chosen, address ) SELECT c.*, (SELECT cost from item where id=c.i_id)*c.i_quantity as cost, '${mapUndefTo0[req.body['select h_username from item where id=c.i_id']]}', '${req.body.address}' as address FROM cart c WHERE c.c_username = '${req.customer.username}';`
-    
-    // let query=`WITH o_id as (INSERT INTO order_icht (c_username, h_username, delivery_chosen, delivery_cost, address) select distinct ca.c_username, i.h_username , cd.delivery_chosen, h.delivery_cost, "${req.body.address}" from cart ca, item i, cart_deliver cd, hotel h where ca.c_username="${req.customer.username}" and ca.i_id=i.id AND cd.c_username=ca.c_username AND i.h_username=cd.h_username AND i.h_username=h.username order by i.h_username returning id) INSERT INTO order_ioi (o_id, i_id, i_quantity, cost) select o.id as oid, ca.i_id, ca.i_quantity, (ca.i_quantity*i.cost) as cost from order_icht o, cart ca, item i where ca.c_username='${req.customer.username}' AND id = o.id, ca.c_username=o.c_username AND ca.i_id=i.id AND ca.i_id in (select id from item where h_username=o.h_username) order by oid;`
-
     
     let deleteQuery = `DELETE from cart where c_username = '${req.customer.username}';`
     let query = `INSERT INTO order_icht (c_username, h_username, delivery_chosen, delivery_cost, address) select distinct ca.c_username, i.h_username , (cd.delivery_chosen AND h.delivery) as delivery_chosen , h.delivery_cost, "${req.body.address}" from cart ca, item i, cart_deliver cd, hotel h where ca.c_username="${req.customer.username}" and ca.i_id=i.id AND cd.c_username=ca.c_username AND i.h_username=cd.h_username AND i.h_username=h.username AND i.available=1 AND h.open=1  order by i.h_username;`
@@ -436,7 +405,7 @@ router.post('/cart/:id', ensureCustomer, (req, res) => {
                     res.redirect("/customer/cart")
                     return;
                 }
-                res.redirect("/cart")
+                res.redirect("/customer/cart")
             });
             // res.send(results)
         });
@@ -484,34 +453,6 @@ router.post('/cart/:id/remove', ensureCustomer, (req, res) => {
     }
 })
 
-// router.get('/:h_username/item', (req, res) => {
-//     let query = `SELECT * FROM item WHERE h_username='${req.params.h_username}'`;
-//     db.query(query, function (error, results, fields) {
-//         if (error) {
-//             console.log(error);
-//             res.send(error)
-//             return;
-//         }
-//         res.send(results)
-//     });
-// })
-
-// router.get('/item/create', ensureHotel, (req, res) => {
-//     res.render('item', { title: req.hotel.username });
-// })
-
-// router.post('/item/create', ensureHotel, (req, res) => {
-//     const item = req.body;
-//     let query = `INSERT INTO item ( h_username, name, image, details, cost ) VALUES ( '${req.hotel.username}', '${item.name}', '${item.image}', '${item.details}', '${item.cost}' )`;
-//     db.query(query, function (error, results, fields) {
-//         if (error) {
-//             console.log(error);
-//             res.send(error)
-//             return;
-//         }
-//         res.send(results)
-//     });
-// })
 
 router.get('/logout', (req, res) => {
     res.clearCookie("token").redirect("/");

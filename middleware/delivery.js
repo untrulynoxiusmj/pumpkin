@@ -9,6 +9,7 @@ module.exports = {
         if (!token) return res.redirect("/delivery/login")
         try {
             jwt.verify(token, process.env.JWT_SECRET, function(err, decoded) {
+                console.log(process.env.JWT_SECRET)
                 if (err) {
                     console.log(err);
                     res.redirect("/delivery/login")
