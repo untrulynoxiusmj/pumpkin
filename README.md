@@ -1,7 +1,7 @@
-##pumpkin
+# pumpkin
 Food Ordering System
 
-# About
+## About
 
 Pumpkin is a Food ordering system.
 
@@ -16,56 +16,56 @@ Delivery Persons can SignUp/Login, view unassigned orders and accept orders whic
 
 All three types of users can view Pending, Completed and Cancelled orders.
 
-# Installation
+## Installation
 
-##### System Package Requirements
+* #### System Package Requirements
 
-* NodeJS : https://nodejs.org/en/download/
-* NPM : npm is installed with Node.js. Refer:  https://www.npmjs.com/get-npm
-* MySQL
+    * NodeJS : https://nodejs.org/en/download/
+    * NPM : npm is installed with Node.js. Refer:  https://www.npmjs.com/get-npm
+    * MySQL
 
-##### Clone the repo
-```sh
-git clone https://github.com/untrulynoxiusmj/pumpkin.git
-cd pumpkin
-```
-##### MySQL setup
-
-* Make sure MySQL service is up and running.
-* Look for ```db.sql``` file in the root directory of project
-* To create required database and tables, execute ```db.sql``` file
-* Change MySQL configuration
+* #### Clone the repo
     ```sh
-    cd config
-    # Edit db.js file to change configuration
-
-    # Look for the following block of code in db.js
-
-    # ==========================================
-    const connection = mysql.createConnection({
-    host     : 'localhost',
-    user     : 'root',
-    password : 'root',
-    database : 'pumpkin'
-    });
-    # ==========================================
-
-    Here, change host, user and password as required.
+    git clone https://github.com/untrulynoxiusmj/pumpkin.git
+    cd pumpkin
     ```
-* You may need to execute this SQL query
+* #### MySQL setup
+
+    * Make sure MySQL service is up and running.
+    * Look for ```db.sql``` file in the root directory of project
+    * To create required database and tables, execute ```db.sql``` file
+    * Change MySQL configuration
+        ```sh
+        cd config
+        # Edit db.js file to change configuration
+
+        # Look for the following block of code in db.js
+
+        # ==========================================
+        const connection = mysql.createConnection({
+        host     : 'localhost',
+        user     : 'root',
+        password : 'root',
+        database : 'pumpkin'
+        });
+        # ==========================================
+
+        Here, change host, user and password as required.
+        ```
+    * You may need to execute this SQL query
+        ```sh
+        ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'your password'
+        ```
+        Please refer to:
+        https://github.com/mysqljs/mysql/issues/2046
+        for more details.
+
+
+* #### Running the project
+    Open terminal in root directory of project
     ```sh
-    ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'your password'
+    npm install
+    npm start
     ```
-    Please refer to:
-    https://stackoverflow.com/questions/50093144/mysql-8-0-client-does-not-support-authentication-protocol-requested-by-server
-    for more details.
 
-
-##### Running the project
-Open terminal in root directory of project
-```sh
-npm install
-npm start
-```
-
-Navigate to `localhost:5000` in your browser.
+    Navigate to `localhost:5000` in your browser.
